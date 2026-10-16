@@ -200,13 +200,14 @@ flowchart LR
 - 文字起こしの結果が空なら、`failed`（`no_speech`）として記録し、ログにも出す。
 - 会話を区切る時刻: 受け付けのたびに SSM の値（55を超えていれば55に丸め、警告を出す）を読み、`conversationExpiresAt` = 受け付けた時刻＋その分数 とする。App が `conversationId` を送らなければ、新しく発行する。
 
-### 6.3 API（要点。正本は Backend の OpenAPI）
+### 6.3 API（要点。正本は Backend の openapi.yaml）
 
 `POST /asks`
 
 | 項目 | 内容 |
 |---|---|
 | `audio` | base64 の PCM（16kHz・モノラル・16bit。60秒で約2.6MB まで） |
+| `text` | 文字の質問（500字まで）。`audio` とどちらか一方。スライス1の App は使わないが、通しの確認に使う |
 | `location` | `{lat, lon}`（取れなければ省く） |
 | `headingSample` | `{lat, lon, at}`（方位の材料。取れなければ省く） |
 | `conversationId` | 続けるときだけ |
