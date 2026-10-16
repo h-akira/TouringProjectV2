@@ -208,8 +208,8 @@ flowchart LR
 |---|---|
 | `audio` | base64 の PCM（16kHz・モノラル・16bit。60秒で約2.6MB まで） |
 | `text` | 文字の質問（500字まで）。`audio` とどちらか一方。スライス1の App は使わないが、通しの確認に使う |
-| `location` | `{lat, lon}`（取れなければ省く） |
-| `headingSample` | `{lat, lon, at}`（方位の材料。取れなければ省く） |
+| `location` | `{latitude, longitude}`（取れなければ省く。不正な値は無いものとして扱う） |
+| `headingSample` | `{latitude, longitude, at}`（方位の材料。`at` はタイムゾーン付き。取れなければ省く） |
 | `conversationId` | 続けるときだけ |
 | ヘッダ | `x-api-key`（接続キー）、`x-user-name`（英小文字と数字の3〜20文字） |
 
