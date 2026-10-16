@@ -1,0 +1,12 @@
+[submodule "App"]
+	path = App
+	url = git@github.com:h-akira/TouringProjectV2_App.git
+[submodule "Backend"]
+	path = Backend
+	url = git@github.com:h-akira/TouringProjectV2_Backend.git
+[submodule "Agent"]
+	path = Agent
+	url = git@github.com:h-akira/TouringProjectV2_Agent.git
+[submodule "CICD"]
+	path = CICD
+	url = git@github.com:h-akira/TouringProjectV2_CICD.git
