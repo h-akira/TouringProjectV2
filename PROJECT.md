@@ -16,16 +16,16 @@
   - 録音の確認
   - 最小限の画面
   - 質問と回答のクラウドへの記録と、段ごとの時間とトークン数の計測
-  - 詳しくは[仕様](specs/2026-10-16-slice1-design.md) §2。
+  - 詳しくは[仕様](docs/specs/2026-10-16-slice1-design.md) §2。
 - **完了の判定**: 仕様 §1 の成功の判定（走りながらの通し・「右手の〜」が正しい・周辺の施設を向きと距離で答える・失敗が音で分かる・時間とトークン数を集計できる・15分の文脈）。
 - **計画**:
 
 | 計画 | 中身 | 状態 |
 |---|---|---|
-| [1](plans/2026-10-16-slice1-plan1-foundation-and-spikes.md) | 土台と、スパイク（ストリーミングの文字起こし・背面での動作） | ✅ |
-| [2](plans/2026-10-16-slice1-plan2-agent.md) | Agent | ✅ |
-| [3](plans/2026-10-16-slice1-plan3-backend.md) | Backend（デプロイ済み） | ✅ |
-| [4a](plans/2026-10-16-slice1-plan4a-app-handsfree.md) | App のハンズフリーの一巡 | ✅ 実機の確認9項目が成功 |
+| [1](docs/plans/2026-10-16-slice1-plan1-foundation-and-spikes.md) | 土台と、スパイク（ストリーミングの文字起こし・背面での動作） | ✅ |
+| [2](docs/plans/2026-10-16-slice1-plan2-agent.md) | Agent | ✅ |
+| [3](docs/plans/2026-10-16-slice1-plan3-backend.md) | Backend（デプロイ済み） | ✅ |
+| [4a](docs/plans/2026-10-16-slice1-plan4a-app-handsfree.md) | App のハンズフリーの一巡 | ✅ 実機の確認9項目が成功 |
 | 4b | App の残り: 録音の確認（SC-12）・新しい会話の確認（DL-02）・ホーム（SC-02 の最小限）の仕上げ、App の issue #1〜#8 から選ぶもの | **次** |
 | — | 完了の判定（実機での通しの確認と、実際の走行での確認） | 4b のあと |
 
