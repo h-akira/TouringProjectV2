@@ -1,0 +1,19 @@
+# Scratch and local-only files
+tmp/
+.DS_Store
+
+# Unit repositories (registered as submodules after their first push)
+/App/
+/Backend/
+/Agent/
+/CICD/
+
+# Secrets and build artifacts
+.env
+.env.*
+*.pyc
+__pycache__/
+node_modules/
+dist/
+build/
+.aws-sam/
