@@ -17,7 +17,7 @@ for unit in "$@"; do
   fi
   dest="$unit/docs-parent/"
   mkdir -p "$dest"
-  rsync -a --delete --exclude 'init/' --exclude 'specs/' --exclude 'plans/' "$SRC" "$dest"
+  rsync -a --delete --exclude 'init/' --exclude 'specs/' --exclude 'plans/' --exclude 'project.md' "$SRC" "$dest"
   cat > "${dest}COPIED.md" <<'EOF'
 # docs-parent
 
