@@ -2,12 +2,6 @@
 tmp/
 .DS_Store
 
-# Unit repositories (registered as submodules after their first push)
-/App/
-/Backend/
-/Agent/
-/CICD/
-
 # Secrets and build artifacts
 .env
 .env.*

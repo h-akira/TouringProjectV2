@@ -16,6 +16,14 @@ AI は現在地と進行方向を踏まえて答え、質問と回答は走っ�
 | [docs/](docs/README.md) | 要件・方針・契約の現行版。[docs/init/](docs/init/README.md) は初期検討のスナップショット | — |
 | [adr/](adr/README.md) | 決定の記録 | — |
 
+## 取得する
+
+```sh
+git clone https://github.com/h-akira/TouringProjectV2.git
+cd TouringProjectV2
+git submodule update --init App Backend Agent   # CICD は非公開なので除く
+```
+
 ## 文書の検査と写し
 
 ```sh
