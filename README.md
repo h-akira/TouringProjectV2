@@ -1,0 +1,24 @@
+# TouringProjectV2
+
+バイクでツーリング中のライダーが、インカムのボタンと声だけで AI に質問できる Android アプリ。
+AI は現在地と進行方向を踏まえて答え、質問と回答は走ったルートとともに記録に残る。
+
+## 構成
+
+このリポジトリはプロジェクト全体の要件・方針・契約・決定を持ち、各ユニットを束ねる。
+
+| パス | 中身 | リポジトリ |
+|---|---|---|
+| `App/` | Android アプリ（React Native／Expo） | `TouringProjectV2_App` |
+| `Backend/` | API（API Gateway＋Lambda・SAM・東京） | `TouringProjectV2_Backend` |
+| `Agent/` | エージェント（Bedrock AgentCore・Strands・us-east-1） | `TouringProjectV2_Agent` |
+| `CICD/` | Agent・Backend のデプロイ（非公開） | `TouringProjectV2_CICD` |
+| [docs/](docs/README.md) | 要件・方針・契約の現行版。[docs/init/](docs/init/README.md) は初期検討のスナップショット | — |
+| [adr/](adr/README.md) | 決定の記録 | — |
+
+## 文書の検査と写し
+
+```sh
+python3 scripts/check_links.py docs adr README.md   # 相対リンクの切れを検査する
+scripts/sync-docs.sh App Backend Agent CICD         # docs/ を各ユニットの docs-parent/ に写す
+```

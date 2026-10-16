@@ -147,7 +147,8 @@ stateDiagram-v2
 
 ### 5.4 録音
 
-- 形式は Ogg/Opus（Android 10 以降の MediaRecorder が変換なしで出せ、Transcribe のストリーミングが受け付ける）。スパイク A で確かめ、だめなら PCM（WAV）にする。
+- 形式は Ogg/Opus（Android 10 以降の MediaRecorder が変換なしで出せ、Transcribe のストリーミングが受け付ける）。スパイク A で確かめ、だめなら PCM にする。
+- expo-audio（58）は Ogg/Opus で録れない（出力形式とエンコーダーに無い）。Ogg/Opus は自前のネイティブモジュール（MediaRecorder）で録る。PCM なら expo-audio の AudioStream（16kHz・int16）で録れる。
 - インカムが繋がらなければ本体のマイクで録り、そのことを画面に出す（US-B-01.004）。
 - 無音検知で終わりを判定しない。上限は20秒で固定（設定はスライス1では出さない）。
 - 直近10件の録音を端末に残し、録った時刻・長さ・マイクのモード・実際の入力デバイス・聞き取られた文を添える。11件目で最も古い音声を消す。試し録りは残さない。
