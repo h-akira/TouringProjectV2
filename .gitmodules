@@ -10,3 +10,6 @@
 [submodule "CICD"]
 	path = CICD
 	url = git@github.com:h-akira/TouringProjectV2_CICD.git
+[submodule "Android"]
+	path = Android
+	url = git@github.com:h-akira/TouringProjectV2_Android.git
