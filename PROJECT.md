@@ -63,7 +63,6 @@
 
 ## 前提（ほかの文書に無いもの）
 
-- spec は `docs/specs/`、plan は `docs/plans/` に置く（CLAUDE.md の `docs/superpowers/` の代わり。これまでの文書との一貫のため）。
 - 後回しの指摘は、各ユニットのリポジトリ（App・Backend・Agent・CICD）の GitHub issue。
 - plan のコードは、使い捨てのフォルダに展開して、テストとビルドが通ることを確かめてから plan に書く。
 - ブランチは plan ごとに、関わるユニットと親に切る。マージはユニット → 親の順で、親は submodule の指す先をユニットのマージ後の main に進める。文書の写し（`scripts/sync-docs.sh`）は、関わらないユニット（Agent・CICD など）では main に直接コミットする。
