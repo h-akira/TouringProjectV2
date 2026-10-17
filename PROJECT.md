@@ -14,13 +14,13 @@
 
 ## 次にやること
 
-1. 移行の [plan 2](docs/plans/2026-10-17-native-migration-plan2-finish.md) を実行する（実行のしかたは利用者が選ぶ。Native なら `superpowers:executing-plans`、Subagent なら `superpowers:subagent-driven-development`）。Android と親にブランチ `migration-plan2` を切る。
+1. 移行の [plan 2](docs/plans/2026-10-17-native-migration-plan2-finish.md) の残り: 最終レビュー（`superpowers:executing-plans` の Final Review。ledger は `.superpowers/sdd/2026-10-17-native-migration-plan2-finish/progress.md`）→ `superpowers:finishing-a-development-branch`（push・マージは利用者。Android → 親の順）→ Task 13（React Native 版の issue #10〜#13 を閉じる・`TouringProjectV2_App` をアーカイブ。どちらも利用者の確認を取る）。Task 1〜12 は済み（ブランチ `migration-plan2`）。
 2. 移行が済んだら（plan 2 のあとでもよい）、スライス2の [spec](docs/specs/2026-10-17-slice2-design.md) の技術の節をネイティブ前提に直し、レビューを受ける（移行の spec §10）。
 3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
-**分け方**: 4ユニット（App・Backend・Agent・CICD）を一度には作れないので、利用者に見える一続きの機能を、全ユニットに縦に通す「スライス」で切る。スライスごとに spec → plan（ユニットごとなどに分ける）→ 実装 → 実機の確認を回す。
+**分け方**: 4ユニット（Android・Backend・Agent・CICD）を一度には作れないので、利用者に見える一続きの機能を、全ユニットに縦に通す「スライス」で切る。スライスごとに spec → plan（ユニットごとなどに分ける）→ 実装 → 実機の確認を回す。
 **順番の理由**: スライス1で、最も大きなリスク（ハンズフリーの起動・インカムのマイクの経路・背面での動作・応答の待ち時間・費用）を先に実機で確かめる。ネイティブ移行は、アプリの肝がすでにネイティブにあり、つなぎ目の確認が実機に回っていたため、スライス2の前に行う（[adr/0005](adr/0005-native-android-app.md)）。スライス2は「走ったあと」の中心で、残る最大のリスク（何時間も背面で位置を取り続けること・端末の記録の作り）を持つので先に置く。同期の細かい場面（通信できないとき・端末をまたぐとき・削除）は記録の形が固まってからのほうが手戻りが少ないので、スライス3に回す。
 
 着手する順に並べる。
@@ -41,7 +41,7 @@
 | [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り（録音の確認 SC-12・回答の音量 SC-21・音量の警告・走行用のビルド・App の issue #1〜#8） | ✅ 完了（実機の確認まで。マージ済み） |
 | — | 完了の判定（実際の走行） | 未実施 |
 
-### 2. ネイティブ移行: App を Kotlin で作り直す（plan 1 完了・plan 2 計画済み）
+### 2. ネイティブ移行: App を Kotlin で作り直す（plan 2 実装済み。確認待ち: 最終レビュー・マージ・移行の締め）
 
 - **目的**: App を React Native から Kotlin・Compose に移し、新しいリポジトリ `TouringProjectV2_Android`（submodule `Android/`）で、スライス1と同じ振る舞いに戻す。新しい機能は足さない。
 - **範囲の要点**: ハンズフリーの一巡・会話の文脈・位置と方位・スライス1の画面・走行用のビルド。今の Kotlin は移す。React Native 版の設定は引き継がない（詳しくは [spec](docs/specs/2026-10-17-native-migration-design.md) §2）
@@ -51,7 +51,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md) | 土台と、ハンズフリーの一巡（雛形・テストの道具・エミュレーター・Kotlin の移植・状態機械・API・サービス・ホーム・SC-03・接続・ユーザー名・戻るアプリ） | ✅ 完了（マージ済み） |
-| [2](docs/plans/2026-10-17-native-migration-plan2-finish.md) | 残りの画面と仕上げ（SC-12 と録音を残すこと・SC-21・音量の警告・走行用のビルド・Android の issue #1〜#5・06/07 と submodule `App/` の整理・React Native 版の issue #10〜#13 とアーカイブ）。署名は開発用の鍵のまま。スライス1の走行での判定は含めない | 計画済み |
+| [2](docs/plans/2026-10-17-native-migration-plan2-finish.md) | 残りの画面と仕上げ（SC-12 と録音を残すこと・SC-21・音量の警告・走行用のビルド・Android の issue #1〜#5・06/07 と submodule `App/` の整理・React Native 版の issue #10〜#13 とアーカイブ）。署名は開発用の鍵のまま。スライス1の走行での判定は含めない | 実装済み（確認待ち: 最終レビュー・マージ・Task 13）。実機の確認は ✓（音量の聞き比べだけ、差が分からず既知の制約として通した） |
 
 ### 3. スライス2: 走行の記録と、地図での振り返り（技術の節をネイティブ前提に直してからレビュー）
 
@@ -88,13 +88,13 @@ plan の分け方と中身は、技術の節を直すときに見直す。
 - Android: 押下は、Activity の復元（プロセスが死んだ後）と「最近使ったアプリ」からの再表示では数えない（移行 plan 1 の最終レビュー）。
 - 端末（Pixel 8a）には2つのユーザー（メインと「サブ」）がある。署名の違うアプリを入れ直すときは、両方から外す（`adb uninstall --user 10 ...`）。スライス1のスパイクのアプリ `com.touringproject.v2spike` が両方に残っている（移行 plan 1）。
 
-- 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み。音量の要望が出たら、この経緯を前提にする）。
-- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。App の `getMediaVolume` はそのあいだ `null` を返す（plan 4b。音量を扱う機能を足すときに効く）。
-- release の APK には、Expo の雛形由来の `SYSTEM_ALERT_WINDOW` などが入る。利用者と決めて外していない（plan 4b。spec §5.7）。
+- 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
+- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面は直前の値を使う（`ui/Labels.kt` の `nextVolume`。音量を扱う機能を足すときに効く）。
+- Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
 
-- 後回しの指摘は、各ユニットのリポジトリ（App・Backend・Agent・CICD。移行後は App の代わりに Android）の GitHub issue。
+- 後回しの指摘は、各ユニットのリポジトリ（Android・Backend・Agent・CICD）の GitHub issue。
 - plan のコードは、使い捨てのフォルダに展開して、テストとビルドが通ることを確かめてから plan に書く。
 - ブランチは plan ごとに、関わるユニットと親に切る。マージはユニット → 親の順で、親は submodule の指す先をユニットのマージ後の main に進める。文書の写し（`scripts/sync-docs.sh`）は、関わらないユニット（Agent・CICD など）では main に直接コミットする。
 - push の前に `pre-push-secret-scan` をかけて報告する。
