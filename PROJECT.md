@@ -26,7 +26,7 @@
 | [2](docs/plans/2026-10-16-slice1-plan2-agent.md) | Agent | ✅ |
 | [3](docs/plans/2026-10-16-slice1-plan3-backend.md) | Backend（デプロイ済み） | ✅ |
 | [4a](docs/plans/2026-10-16-slice1-plan4a-app-handsfree.md) | App のハンズフリーの一巡 | ✅ 実機の確認9項目が成功 |
-| [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り: 録音の確認（SC-12）・回答の音量（SC-20。Backend の `volumeDb` を含む）・メディアの音量の警告・走行用のビルド・App の issue #1〜#8（仕様 §5.4〜§5.7） | **次**（計画済み。実行待ち） |
+| [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り: 録音の確認（SC-12）・回答の音量（SC-20。Backend の `volumeDb` を含む）・メディアの音量の警告・走行用のビルド・App の issue #1〜#8（仕様 §5.4〜§5.7） | 実装済み（実機の確認待ち） |
 | — | 完了の判定（実機での通しの確認と、実際の走行での確認） | 4b のあと |
 
 ### スライス2以降（未決）
@@ -41,7 +41,7 @@
 
 ## 次にやること
 
-1. 計画4b を実行する（実行の方法は利用者が選ぶ）。Backend → App の順。
+1. 計画4b の実機の確認（Task 13）をする。
 2. 完了の判定の確認をする。
 
 後回しにした点は、各ユニットのリポジトリの GitHub issue にある。

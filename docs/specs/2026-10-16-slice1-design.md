@@ -173,7 +173,7 @@ stateDiagram-v2
 
 ### 5.7 走行用のビルド
 
-開発用のビルドは JS を USB 越しに Mac の Metro から読むので、走行では使えない。走行用には、Mac で release を作って入れる（`npx expo run:android --variant release --device`）。署名は開発用と同じなので、上書きしてもデータ（接続キー・設定・録音）は残る。開発用にだけ入る権限（`SYSTEM_ALERT_WINDOW`・`ACCESS_LOCAL_NETWORK` など）が入っていないことを確かめる。手順は App の README に書く。
+開発用のビルドは JS を USB 越しに Mac の Metro から読むので、走行では使えない。走行用には、Mac で release を作って入れる（`npx expo run:android --variant release --device`）。署名は開発用と同じなので、上書きしてもデータ（接続キー・設定・録音）は残る。開発用にだけ入る権限（`ACCESS_LOCAL_NETWORK`）が入っていないことを確かめる。`SYSTEM_ALERT_WINDOW`・`READ/WRITE_EXTERNAL_STORAGE`・`VIBRATE` は Expo の雛形が本体にも入れるもので、App は使わないが外さない（`SYSTEM_ALERT_WINDOW` は利用者が許可しない限り効果が無い）。手順は App の README に書く。
 
 ### 5.8 そのほか
 
@@ -294,6 +294,7 @@ App と Backend で同じ一覧を使う（07 の現行版に書く）。
 | `timeout` | App（120秒） | 失敗の音＋「時間切れです」 |
 | `network` | App | 失敗の音＋「通信できません」。録音は捨てる |
 | `invalid_key` | API Gateway（403） | 失敗の音＋「接続キーを確かめてください」。試し直さない |
+| `service` | App（フォアグラウンドサービスが始まらない） | 失敗の音＋「準備できなかったため、質問できませんでした」 |
 | `rate_limited`・一時的な 5xx | API Gateway | 間隔を空けて3回まで試し直し、だめなら `network` |
 
 - 失敗は、ナビを表示したまま音で知らせる。前面にいれば SC-03 も失敗の色にする。
