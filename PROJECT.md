@@ -84,13 +84,13 @@ plan の分け方と中身は、技術の節を直すときに見直す。
 
 - Android: Robolectric は SDK 35 で動かす（SDK 36 は Java 21 が要る。`robolectric.properties`）。`withContext(Dispatchers.Main)` に切り替えるコードを Robolectric のテストから直に呼ぶと、メインスレッドの待ち合いで止まる（別スレッドから呼んでメインのルーパーを回す。`AudioTest` の例）。テストの実行には5分の上限がある（移行 plan 1）。
 - Android: `MainActivity` は `singleTask` で、`ActivityScenario` は追えない。エミュレーターのテストは Activity を直接起動する（移行 plan 1）。
-- Android: minSdk 29 のまま、Android 12 より前は画面から始めた質問を本体のマイクで録る（通信の機器の API が 12 以降のため。インカムのボタンの経路は試す）。minSdk を上げるなら spec を直す（移行 plan 1 の最終レビュー）。
-- Android: 押下は、Activity の復元（プロセスが死んだ後）と「最近使ったアプリ」からの再表示では数えない（移行 plan 1 の最終レビュー）。
+- Android: minSdk 29 のまま、Android 12 より前は画面から始めた質問を本体のマイクで録る（通信の機器の API が 12 以降のため。インカムのボタンの経路は試す）。minSdk を上げるなら spec を直す（TouringProjectV2_Android の PR #6）。
+- Android: 押下は、Activity の復元（プロセスが死んだ後）と「最近使ったアプリ」からの再表示では数えない（TouringProjectV2_Android の PR #6）。
 - 端末（Pixel 8a）には2つのユーザー（メインと「サブ」）がある。署名の違うアプリを入れ直すときは、両方から外す（`adb uninstall --user 10 ...`）。スライス1のスパイクのアプリ `com.touringproject.v2spike` が両方に残っている（移行 plan 1）。
 
 - 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
 - インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面は直前の値を使う（`ui/Labels.kt` の `nextVolume`。音量を扱う機能を足すときに効く）。
-- Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。移行 plan 2 の最終レビュー。押下が無視されて困るなら、片付けを待って始める作りにする）。
+- Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。TouringProjectV2_Android のコミット 5a59440。押下が無視されて困るなら、片付けを待って始める作りにする）。
 - Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
