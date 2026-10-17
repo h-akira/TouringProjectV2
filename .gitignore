@@ -1,5 +1,6 @@
 # Scratch and local-only files
 tmp/
+local/
 .DS_Store
 
 # Secrets and build artifacts
