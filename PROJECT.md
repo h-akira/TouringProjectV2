@@ -14,9 +14,8 @@
 
 ## 次にやること
 
-1. 移行の [plan 2](docs/plans/2026-10-17-native-migration-plan2-finish.md) のブランチ（Android と親の `migration-plan2`）を、利用者が push してマージする（Android → 親の順。親は submodule の指す先をマージ後の main に進める）。そのあと Task 13（React Native 版の App の issue #10〜#13 を「移行で解消」で閉じる・`TouringProjectV2_App` をアーカイブ。どちらも利用者の確認を取る）。
-2. 移行が済んだら（plan 2 のあとでもよい）、スライス2の [spec](docs/specs/2026-10-17-slice2-design.md) の技術の節をネイティブ前提に直し、レビューを受ける（移行の spec §10）。
-3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
+1. スライス2の [spec](docs/specs/2026-10-17-slice2-design.md) の技術の節をネイティブ前提に直し、レビューを受ける（移行の spec §10）。
+2. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
@@ -41,17 +40,9 @@
 | [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り（録音の確認 SC-12・回答の音量 SC-21・音量の警告・走行用のビルド・App の issue #1〜#8） | ✅ 完了（実機の確認まで。マージ済み） |
 | — | 完了の判定（実際の走行） | 未実施 |
 
-### 2. ネイティブ移行: App を Kotlin で作り直す（plan 2 実装済み。確認待ち: マージ・移行の締め）
+### 2. ネイティブ移行: App を Kotlin で作り直す（✅ 完了）
 
-- **目的**: App を React Native から Kotlin・Compose に移し、新しいリポジトリ `TouringProjectV2_Android`（submodule `Android/`）で、スライス1と同じ振る舞いに戻す。新しい機能は足さない。
-- **範囲の要点**: ハンズフリーの一巡・会話の文脈・位置と方位・スライス1の画面・走行用のビルド。今の Kotlin は移す。React Native 版の設定は引き継がない（詳しくは [spec](docs/specs/2026-10-17-native-migration-design.md) §2）
-- **完了の判定**: spec §8 の振り分けのとおり、自動で確かめる項目がテストで通り、利用者の確認（インカムでの一巡・音量の聞き比べ・試し録り・SCO 中の警告・走行用のビルド）がすべて ✓。親の文書が新しい構成に合う。
-- **計画**:
-
-| plan | 中身 | 状態 |
-|---|---|---|
-| [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md) | 土台と、ハンズフリーの一巡（雛形・テストの道具・エミュレーター・Kotlin の移植・状態機械・API・サービス・ホーム・SC-03・接続・ユーザー名・戻るアプリ） | ✅ 完了（マージ済み） |
-| [2](docs/plans/2026-10-17-native-migration-plan2-finish.md) | 残りの画面と仕上げ（SC-12 と録音を残すこと・SC-21・音量の警告・走行用のビルド・Android の issue #1〜#5・06/07 と submodule `App/` の整理・React Native 版の issue #10〜#13 とアーカイブ）。署名は開発用の鍵のまま。スライス1の走行での判定は含めない | 実装済み（確認待ち: マージ・Task 13）。最終レビュー済み。実機の確認は ✓（音量の聞き比べだけ、差が分からず既知の制約として通した）。後回しは Android の issue #7〜#13 |
+[spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
 ### 3. スライス2: 走行の記録と、地図での振り返り（技術の節をネイティブ前提に直してからレビュー）
 
