@@ -2,13 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** スライス1の完了の判定（実際の走行での通し）に入れるように、App を仕上げる。録音の確認（SC-12）・回答の音量（SC-20。Backend の `volumeDb`）・メディアの音量の警告・走行用のビルドを足し、計画4a のレビューと実機の確認で見つかった App の issue #1〜#8 を直す。
+**Goal:** スライス1の完了の判定（実際の走行での通し）に入れるように、App を仕上げる。録音の確認（SC-12）・回答の音量（SC-21。Backend の `volumeDb`）・メディアの音量の警告・走行用のビルドを足し、計画4a のレビューと実機の確認で見つかった App の issue #1〜#8 を直す。
 
 **Architecture:** Backend は `POST /asks` に `volumeDb` を足し、Polly の SSML に入れる（環境変数 `POLLY_VOLUME` はやめる）。App は、これまでどおり判断を副作用のない部分（`flow.ts`・`recordings.ts`・`trial.ts`・`tracker.ts`・`press.ts`・`homeBanner.ts`）に置いて Jest で確かめ、端末にしかできないこと（音量・実際の入力デバイス・押下の受け渡し）だけをネイティブモジュールに足す。試し録りは、質問の司令塔（`AskController`）とは別の小さな司令塔（`TrialController`）にし、インカムのボタンは試し録りのあいだだけそちらへ渡す。
 
 **Tech Stack:** Backend: Python 3.13・SAM・pytest（moto）。App: Expo SDK 58・React Native 0.88・expo-router・expo-audio・expo-file-system（`legacy` と、WAV のバイト列だけ新しい `File`）・expo-location・Jest（jest-expo）・Kotlin（Expo Modules）。
 
-**Spec:** [docs/specs/2026-10-16-slice1-design.md](../specs/2026-10-16-slice1-design.md)（§2・§5.4〜§5.8・§6.3・§6.4・§8.1・§10）、契約 `Backend/openapi.yaml` と [docs/07_units_contracts.md](../07_units_contracts.md) UC-5、画面 [docs/mock/index.html](../mock/index.html)（SC-02・SC-09・SC-12・SC-20・DL-01）、詳細要件 [docs/04_detailed_requirements.md](../04_detailed_requirements.md)（US-B-08・US-E-03・US-C-06）、App の GitHub issue #1〜#8。
+**Spec:** [docs/specs/2026-10-16-slice1-design.md](../specs/2026-10-16-slice1-design.md)（§2・§5.4〜§5.8・§6.3・§6.4・§8.1・§10）、契約 `Backend/openapi.yaml` と [docs/07_units_contracts.md](../07_units_contracts.md) UC-5、画面 [docs/mock/index.html](../mock/index.html)（SC-02・SC-09・SC-12・SC-21・DL-01）、詳細要件 [docs/04_detailed_requirements.md](../04_detailed_requirements.md)（US-B-08・US-E-03・US-C-06）、App の GitHub issue #1〜#8。
 
 ## Global Constraints
 
@@ -41,7 +41,7 @@
 | `Backend/src/handlers/ask.py`・`worker.py`、`src/lib/speech.py` | 記録に残し、Polly に渡す | 1 |
 | `Backend/openapi.yaml`・`template.yaml` | 契約に足し、`POLLY_VOLUME` をやめる | 1 |
 | `App/src/settings/store.ts` | 設定に `answerVolumeDb` | 2 |
-| `App/app/settings/volume.tsx` | SC-20 回答の音量 | 2 |
+| `App/app/settings/volume.tsx` | SC-21 回答の音量 | 2 |
 | `App/src/location/heading.ts`・`tracker.ts` | 精度で除く（#5）・購読の世代と古い点（#1） | 3 |
 | `App/src/handsfree/press.ts`、`modules/handsfree/.../PressStore.kt` | 起動の途中の押下の保留（#3）・渡した押下を残さない（#2） | 4 |
 | `App/src/ask/flow.ts`・`failures.ts`・`controller.ts` | サービスが始まらないときの失敗（#6） | 5 |
@@ -383,7 +383,7 @@ Expected: smoke が成功する（smoke は `volumeDb` を送らないので、�
 
 ---
 
-### Task 2: App: 回答の音量の設定（SC-20）
+### Task 2: App: 回答の音量の設定（SC-21）
 
 **Files:**
 - Create: `App/app/settings/volume.tsx`
@@ -498,7 +498,7 @@ diff --git a/src/settings/store.ts b/src/settings/store.ts
  // Settings kept on the device. The connection key lives separately in SecureStore (storage.ts).
  export type ReturnTiming = "sent" | "answered" | "spoken";
  export type LaunchableApp = { packageName: string; label: string };
-+// How much the Backend raises the answer audio (SC-20). The Backend accepts exactly these values.
++// How much the Backend raises the answer audio (SC-21). The Backend accepts exactly these values.
 +export const VOLUME_DB_CHOICES = [0, 3, 6, 9, 12] as const;
 +export type VolumeDb = (typeof VOLUME_DB_CHOICES)[number];
 +export const DEFAULT_VOLUME_DB: VolumeDb = 6;
@@ -558,7 +558,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useAsk } from "../../src/ask/AskProvider";
 import { VOLUME_DB_CHOICES } from "../../src/settings/store";
 
-// SC-20: how much the Backend raises the answer audio. Takes effect from the next question.
+// SC-21: how much the Backend raises the answer audio. Takes effect from the next question.
 export default function Volume() {
   const { settings, updateSettings } = useAsk();
   if (!settings) return null;
@@ -639,7 +639,7 @@ Expected: 77 passed、型のエラー 0。`/settings/recordings` の画面ファ
 ```bash
 cd $APP && git add src/settings/store.ts src/api/client.ts src/ask/controller.ts app/settings/volume.tsx app/settings/index.tsx app/_layout.tsx \
   src/settings/__tests__/store.test.ts src/ask/__tests__/controller.test.ts src/ask/__tests__/flow.test.ts
-git commit -m "feat: choose how loud answers are (SC-20)"
+git commit -m "feat: choose how loud answers are (SC-21)"
 ```
 
 ---
@@ -2897,7 +2897,7 @@ cd $ROOT && git switch -c slice1-plan4b
 `| [4b](...) | ... | **次**（計画済み。実行待ち） |` の行を、次に置き換える:
 
 ```markdown
-| [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り: 録音の確認（SC-12）・回答の音量（SC-20・Backend の `volumeDb`）・メディアの音量の警告・走行用のビルド・issue #1〜#8 | 実装済み（実機の確認待ち） |
+| [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り: 録音の確認（SC-12）・回答の音量（SC-21・Backend の `volumeDb`）・メディアの音量の警告・走行用のビルド・issue #1〜#8 | 実装済み（実機の確認待ち） |
 ```
 
 「次にやること」の 1（`計画4b を実行する…`）を「計画4b の実機の確認（Task 13）をする。」に直す。
