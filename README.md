@@ -12,6 +12,7 @@ AI は現在地と進行方向を踏まえて答え、質問と回答は走っ�
 | パス | 中身 | リポジトリ |
 |---|---|---|
 | `App/` | Android アプリ（React Native／Expo） | `TouringProjectV2_App` |
+| `Android/` | Android アプリ（Kotlin・Jetpack Compose）。`App/` からの移行中（[adr/0005](adr/0005-native-android-app.md)） | `TouringProjectV2_Android` |
 | `Backend/` | API（API Gateway＋Lambda・SAM・東京） | `TouringProjectV2_Backend` |
 | `Agent/` | エージェント（Bedrock AgentCore・Strands・us-east-1） | `TouringProjectV2_Agent` |
 | `CICD/` | Agent・Backend のデプロイ（非公開） | `TouringProjectV2_CICD` |
@@ -23,12 +24,12 @@ AI は現在地と進行方向を踏まえて答え、質問と回答は走っ�
 ```sh
 git clone https://github.com/h-akira/TouringProjectV2.git
 cd TouringProjectV2
-git submodule update --init App Backend Agent   # CICD は非公開なので除く
+git submodule update --init App Android Backend Agent   # CICD は非公開なので除く
 ```
 
 ## 文書の検査と写し
 
 ```sh
 python3 scripts/check_links.py docs adr README.md   # 相対リンクの切れを検査する
-scripts/sync-docs.sh App Backend Agent CICD         # docs/ を各ユニットの docs-parent/ に写す
+scripts/sync-docs.sh App Android Backend Agent CICD # docs/ を各ユニットの docs-parent/ に写す
 ```
