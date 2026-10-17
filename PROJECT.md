@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. ネイティブ移行の plan 1 を `superpowers:writing-plans` で書く（[spec](docs/specs/2026-10-17-native-migration-design.md) は承認済み）。
+1. ネイティブ移行の [plan 1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md) を実行する（実行のしかたは利用者が選ぶ。`superpowers:subagent-driven-development` か `superpowers:executing-plans`）。終わったら plan 2 を `superpowers:writing-plans` で書く。
 2. 移行の spec が承認されたら、スライス2の [spec](docs/specs/2026-10-17-slice2-design.md) の技術の節をネイティブ前提に直し、レビューを受ける（移行の spec §10）。
 3. スライス1の完了の判定（利用者の作業。いつでもよい）: 端末に入っている React Native 版の走行用のビルドで実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
@@ -41,7 +41,7 @@
 | [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り（録音の確認 SC-12・回答の音量 SC-21・音量の警告・走行用のビルド・App の issue #1〜#8） | ✅ 完了（実機の確認まで。マージ済み） |
 | — | 完了の判定（実際の走行） | 未実施 |
 
-### 2. ネイティブ移行: App を Kotlin で作り直す（spec 承認済み・plan の作成待ち）
+### 2. ネイティブ移行: App を Kotlin で作り直す（plan 1 計画済み）
 
 - **目的**: App を React Native から Kotlin・Compose に移し、新しいリポジトリ `TouringProjectV2_Android`（submodule `Android/`）で、スライス1と同じ振る舞いに戻す。新しい機能は足さない。
 - **範囲の要点**: ハンズフリーの一巡・会話の文脈・位置と方位・スライス1の画面・走行用のビルド。今の Kotlin は移す。React Native 版の設定は引き継がない（詳しくは [spec](docs/specs/2026-10-17-native-migration-design.md) §2）
@@ -50,8 +50,8 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| 1 | 土台と、ハンズフリーの一巡（雛形・テストの道具・エミュレーター・Kotlin の移植・状態機械・API・サービス・最小限の画面） | 未作成 |
-| 2 | 残りの画面と仕上げ（設定の各画面・SC-12・SC-21・警告・走行用のビルド・文書と submodule の整理） | 未作成 |
+| [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md) | 土台と、ハンズフリーの一巡（雛形・テストの道具・エミュレーター・Kotlin の移植・状態機械・API・サービス・ホーム・SC-03・接続・ユーザー名・戻るアプリ） | 計画済み |
+| 2 | 残りの画面と仕上げ（SC-12 と録音を残すこと・SC-21・音量の警告・走行用のビルド・06/07 と submodule `App/` の整理） | 未作成 |
 
 ### 3. スライス2: 走行の記録と、地図での振り返り（技術の節をネイティブ前提に直してからレビュー）
 
