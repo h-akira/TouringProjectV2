@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス2の [spec](docs/specs/2026-10-17-slice2-design.md) のレビュー（技術の節をネイティブ前提に直した。利用者の承認待ち）。承認が取れたら `superpowers:writing-plans` で plan 1 を書く。
+1. スライス2の [plan 1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) の実行（ブランチ `slice2-plan1` を Android と親に切る。終わりに利用者が短い走行で確かめる）。
 2. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
@@ -44,7 +44,7 @@
 
 [spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
-### 3. スライス2: 走行の記録と、地図での振り返り（spec のレビュー待ち）
+### 3. スライス2: 走行の記録と、地図での振り返り（plan 1 を計画済み）
 
 - **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
 - **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・日ごと・会話の詳細の地図（MapLibre と国土地理院のタイル）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
@@ -53,9 +53,9 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| 1 | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | 未作成 |
+| [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | 計画済み |
 | 2 | Backend（`rideId`・`GET /asks` の追加項目・走行の `PUT`。issue #4 を入れるか決める） | 未作成 |
-| 3 | Android: 送信・質問の保存・タブ・ホームの走行のカード・SC-16（issue #12 を入れるか決める） | 未作成 |
+| 3 | Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し（issue #12 を入れるか決める） | 未作成 |
 | 4 | Android: 振り返り（MapLibre・SC-05・SC-06・SC-15・SC-07） | 未作成 |
 
 使い捨てのスパイクは置かない（理由は spec §11）。
