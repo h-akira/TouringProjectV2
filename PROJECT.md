@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス2の [plan 1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) の実行（ブランチ `slice2-plan1` を Android と親に切る。終わりに利用者が短い走行で確かめる）。
+1. スライス2の plan 1 の実機の確認（利用者の作業）: [plan](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) の Task 9 の表に加え、ホームがスクロールしないこと・質問のあとの logcat に `service_apply_failed` が出ないか（背面からマイクの種類を外せるか）を見る。走行用のビルドを入れてから行う。✓ なら結果を adr/0006 の「影響」に書き足し、ブランチ `slice2-plan1`（Android と親）をマージして、plan 2（Backend）へ。✗ なら `superpowers:systematic-debugging`。
 2. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
@@ -44,7 +44,7 @@
 
 [spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
-### 3. スライス2: 走行の記録と、地図での振り返り（plan 1 を計画済み）
+### 3. スライス2: 走行の記録と、地図での振り返り（plan 1 は実装済み・実機の確認待ち）
 
 - **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
 - **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・日ごと・会話の詳細の地図（MapLibre と国土地理院のタイル）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
@@ -53,7 +53,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | 計画済み |
+| [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | 実装済み（確認待ち: 短い走行での実機の確認。後回しは Android の issue #15〜#20） |
 | 2 | Backend（`rideId`・`GET /asks` の追加項目・走行の `PUT`。issue #4 を入れるか決める） | 未作成 |
 | 3 | Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し（issue #12 を入れるか決める） | 未作成 |
 | 4 | Android: 振り返り（MapLibre・SC-05・SC-06・SC-15・SC-07） | 未作成 |
@@ -82,6 +82,9 @@
 - 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
 - インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面は直前の値を使う（`ui/Labels.kt` の `nextVolume`。音量を扱う機能を足すときに効く）。
 - Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。TouringProjectV2_Android のコミット 5a59440。押下が無視されて困るなら、片付けを待って始める作りにする）。
+- Android: 走行の `updatedAt` は、状態・名前・区間が変わったときだけ進む。点の追加と生きていた時刻の書き込み（`addPoint`・`markAlive`）では進まない（距離は送らない前提。plan 3 の送信で距離を送るなら、別の印を足す。Android のコミット 46eea83）。
+- Android: サービスは `onStartCommand` で `rides.load()` を待ってから `startForeground` を呼ぶ。plan 3 でマイグレーションを足すとき、`load()` が遅くなると前面サービスの開始の時間切れ（約10秒）にかかるので、重い処理を入れない（スライス2 plan 1 の最終レビュー。adr/0006）。
+- Android: エミュレーターのテストで Back を押す前に、`onBackPressedDispatcher.hasEnabledCallbacks()` が false になるのを待つ。対話の画面の `BackHandler` は、状態が `IDLE` になってから1回描き直すまで残る（Android のコミット b7d6cba）。
 - Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
