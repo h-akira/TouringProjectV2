@@ -10,3 +10,4 @@
 | [0003](0003-conversation-context.md) | 会話の文脈は実行環境のセッションに持ち、15分で区切る | 採用 |
 | [0004](0004-background-processing.md) | 背面での回答待ちと読み上げは、JS とフォアグラウンドサービスで行う | 一部置き換え（0005） |
 | [0005](0005-native-android-app.md) | App を React Native からネイティブ（Kotlin）に移し、新しいリポジトリで作る | 採用 |
+| [0006](0006-background-ride-recording.md) | 走行中のルートは、前面サービスの中で Fused の位置を受けて端末の DB に書く | 採用 |
