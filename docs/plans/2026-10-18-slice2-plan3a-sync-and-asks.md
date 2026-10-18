@@ -2181,13 +2181,25 @@ git commit -m "docs: describe sending rides and keeping asks"
 
 ---
 
+### Task 9a: 設定に版を出す（実行中に利用者が足した）
+
+Task 10 の前に、入っているビルドを見分けられないと利用者が気付き、範囲に足した（spec §7.9）。コミットの番号は出さず、版を手で上げる。
+
+- `SettingsScreen` に `version: String` を足し、最後に押せない行「バージョン」（`testTag("versionRow")`）を出す。`SettingsRow` の `onClick` を省けるようにした。`AppUi` は `BuildConfig.VERSION_NAME` を渡す
+- `app/build.gradle.kts` の `versionCode = 2`・`versionName = "0.2.0"`
+- テスト: `ScreensTest.kt` の `SettingsScreensTest.the_settings_list_shows_the_app_version_as_a_row_that_leads_nowhere`（JVM のテストは300件になる）
+- Android の README の「走行用のビルド」に、版を上げる決まりを書いた
+- Android のコミット `4b088e8`
+
+---
+
 ### Task 10: 利用者の実機の確認
 
 AI はこの Task を自分で通さない。走行用のビルドを入れ、利用者に手順を渡し、終わったら DynamoDB を読んで確かめる。
 
 - [ ] **Step 1: 走行用のビルドを入れる（AI が行う。実機を USB で繋いでもらう）**
 
-実機には版1の DB を持つビルド（Android `46eea83`）が入っている。このビルドを入れて最初に開いたとき、版2への Migration が走る。
+実機には版1の DB を持つビルド（Android `46eea83`）が入っている。入れたあと、アプリの「設定 → バージョン」が `0.2.0` であることを見る。このビルドを入れて最初に開いたとき、版2への Migration が走る。
 
 ```bash
 unset ANDROID_SERIAL
