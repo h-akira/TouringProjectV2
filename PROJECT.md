@@ -14,9 +14,8 @@
 
 ## 次にやること
 
-1. ブランチ `slice2-plan2` のマージ（利用者が明示したときだけ。Backend → 親の順。親は submodule の指す先を Backend のマージ後の main に進める。push の前に `pre-push-secret-scan`）。デプロイは済んでいる。
-2. スライス2の plan 3（Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16）を `superpowers:writing-plans` で書く（Android の issue #12・#15〜#20・#22 のどれを入れるか決める）。
-3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
+1. スライス2の plan 3（Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16）を `superpowers:writing-plans` で書く（Android の issue #12・#15〜#20・#22 のどれを入れるか決める）。
+2. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
