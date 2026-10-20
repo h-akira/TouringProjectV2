@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス2 plan 4b の実機の確認（利用者）: [plan](docs/plans/2026-10-20-slice2-plan4b-ask-only-while-recording.md) の Task 11 の8項目。走行用のビルド（版 0.5.0）を `adb install --user 0 -r` で入れてから行う（入れたときに Room の版4で、端末の走行に結びつかない質問が消える）。✗ が出たら `superpowers:systematic-debugging`。✓ のあと、push（前に `pre-push-secret-scan`）と PR・マージは利用者が明示したときに行う。ブランチは Android・親とも `slice2-plan4b`。DynamoDB の質問は消し終えた（利用者の判断で、smoke の試しの質問は残した）。
+1. スライス2 plan 4b のマージ（利用者が明示したとき）: Android・親とも `slice2-plan4b`。順番は Android の PR → 親の `slice2-plan4b` に `Android/` の指す先を Android の `main` に進めるコミットを push → 親の PR。push の前に `pre-push-secret-scan`。そのあとスライス2の残り（spec 2 §1 の完了の判定: 実際の走行で、何時間もの記録・電池の減り・plan 3a の確かめ）と、スライス3の範囲を決める（`superpowers:brainstorming`。後回しは Android #23〜#30・#48〜#51 など）。
 2. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした。3a・3b はマージ済みなので、✗ が出たら main から直す）: 版 0.3.1（plan 3b と Android #38 の修正のビルド。Android `51259c9`。3a の送信を含む。#38 はプロセスを消して戻す確かめを実機で ✓、マージ済み）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.3.1 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
 3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。質問は走行の記録中だけ受けるようになった（adr/0008）ので、走行を記録しながら確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
@@ -45,7 +45,7 @@
 
 [spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
-### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2・3b 完了・plan 3a 実装済み（確認待ち）・plan 4a 完了・plan 4b 実装済み（確認待ち））
+### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2・3b 完了・plan 3a 実装済み（確認待ち）・plan 4a 完了・plan 4b 完了（未マージ））
 
 - **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
 - **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・会話の詳細の地図（MapLibre と国土地理院のタイル）。質問は走行の記録中だけ受ける（adr/0008）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
@@ -59,7 +59,7 @@
 | [3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md) | Android: 送信の待ち行列（プロセスの中で spec §5.3 の契機に送る）・質問の保存（Room 版2）と `rideId`・設定の版の表示（spec §7.9。実行中に利用者が足した）・issue #12・#16・#18・#22 | 実装済み（確認待ち: 実際の走行で、300点のかたまり・画面を消して長く走ったときの送信・一時停止中の質問に `rideId` が付かないこと。家の中の短い走行では、plan 1 の走行の送信・端数のかたまり・記録中の質問の `rideId` が ✓。マージ済み。後回しは Android #23〜#30） |
 | [3b](docs/plans/2026-10-20-slice2-plan3b-tabs-and-ride-settings.md) | Android: タブ（記録のタブは仮の画面）・ホームの走行のカードと SC-04 の質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し・issue #15・#19・#20（3a の `asks` の表を読むので後に置く） | ✅ 完了（実機で ✓。マージ済み。後回しは Android #32〜#38） |
 | [4a](docs/plans/2026-10-20-slice2-plan4a-records-and-map.md) | Android: 地図の部品（MapLibre・国土地理院のタイル）と、走行から入る振り返り（SC-05 の走行の一覧と保存の状態・SC-06・SC-07 の走行の中での前後）・名前の変更・Room 版3（断られたかたまりを点ごとに持つ）・issue #27・#32〜#37。ADR 0007 | ✅ 完了（実機の14項目 ✓・名前の変更が DynamoDB に届くことも ✓。マージ済み。後回しは Android #41〜#46） |
-| [4b](docs/plans/2026-10-20-slice2-plan4b-ask-only-while-recording.md) | Android: 質問を走行の記録中だけ受ける（spec §4.7）・ホームの文言・走行に結びつかない質問を消す一度だけの手作業・Android #41・#42・#43・#45・#46。adr/0008（日ごとの振り返りはやめた）。端末の質問は Room の版4で消す | 実装済み（確認待ち: 実機の Task 11。後回しは Android #48〜#50） |
+| [4b](docs/plans/2026-10-20-slice2-plan4b-ask-only-while-recording.md) | Android: 質問を走行の記録中だけ受ける（spec §4.7）・ホームの文言・走行に結びつかない質問を消す一度だけの手作業・Android #41・#42・#43・#45・#46。adr/0008（日ごとの振り返りはやめた）。端末の質問は Room の版4で消す | ✅ 完了（実機の確認 ✓。答えを待つあいだの一時停止は、ふつうの操作では起きないので確認から外した。未マージ。後回しは Android #48〜#51） |
 
 使い捨てのスパイクは置かない（理由は spec §11）。plan 4 を 4a・4b に分けたのは、最も危うい地図を 4a で先に実機で確かめ、どちらの plan も実機で触れる形で終えるため（2026-10-20、利用者と決めた）。そのあと、4b の日ごとの振り返りは要件から外し、4b を質問の受け方の変更に置き換えた（adr/0008）。
 
