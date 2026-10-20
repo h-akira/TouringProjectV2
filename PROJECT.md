@@ -15,7 +15,7 @@
 ## 次にやること
 
 1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした）: 版 0.3.0（plan 3b のビルド。Android `033a709`。3a の送信を含む）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.2.0 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
-2. マージの順番（利用者が行う）: Android の PR #31 → 親の `slice2-plan3a` に `Android/` の指す先を進めるコミットを push → 親の PR #10。そのあと plan 3b（Android・親とも `slice2-plan3a` から切った `slice2-plan3b`。まだ push していない）を push して PR を作り、同じ順でマージする。push の前に `pre-push-secret-scan`。
+2. マージの順番（利用者が行う）: Android の PR #31 → 親の `slice2-plan3a` に `Android/` の指す先を進めるコミットを push → 親の PR #10。そのあと plan 3b（Android・親とも `slice2-plan3a` から切った `slice2-plan3b`。PR は Android #39・親 #11 で、`slice2-plan3a` に向けてある。3a のマージのあとは `main` に付け替える）を同じ順でマージする。push の前に `pre-push-secret-scan`。
 3. スライス2の plan 4（Android: 振り返り）を `superpowers:writing-plans` で書く。範囲を決めるときに Android の issue #27・#32〜#38 を見る（#38「プロセスが消されたあとに戻ると『準備中…』のまま止まる」は早めに直す）。
 4. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
