@@ -14,8 +14,9 @@
 
 ## 次にやること
 
-1. スライス2の plan 3（Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16）を `superpowers:writing-plans` で書く（Android の issue #12・#15〜#20・#22 のどれを入れるか決める）。
-2. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
+1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした）: 版 0.2.0（Android `4b088e8`）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.2.0 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
+2. スライス2の plan 3b を `superpowers:writing-plans` で書く（1 と並べて進めてよい。範囲は plan 表の 3b の行。Android の issue #15・#19・#20 は範囲に入れると決めてある）。
+3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
@@ -44,7 +45,7 @@
 
 [spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
-### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2 完了・plan 3 未作成）
+### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2 完了・plan 3a 実装済み（確認待ち））
 
 - **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
 - **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・日ごと・会話の詳細の地図（MapLibre と国土地理院のタイル）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
@@ -55,8 +56,9 @@
 |---|---|---|
 | [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | ✅ 完了（実機で ✓。ログでの裏付けの2点は adr/0006 の「確かめていないこと」。後回しは Android の issue #15〜#20） |
 | [2](docs/plans/2026-10-18-slice2-plan2-backend.md) | Backend（`rideId`・`GET /asks` の追加項目・走行の `PUT`・Backend の issue #4 Agent のセッションをユーザーごとに分ける）。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 17/17。後回しは Backend #12〜#14・Agent #7・Android #22） |
-| 3 | Android: 送信・質問の保存・タブ・ホームの走行のカードの質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し（issue #12 を入れるか決める） | 未作成 |
-| 4 | Android: 振り返り（MapLibre・SC-05・SC-06・SC-15・SC-07） | 未作成 |
+| [3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md) | Android: 送信の待ち行列（プロセスの中で spec §5.3 の契機に送る）・質問の保存（Room 版2）と `rideId`・設定の版の表示（spec §7.9。実行中に利用者が足した）・issue #12・#16・#18・#22 | 実装済み（確認待ち: 実際の走行で、300点のかたまり・画面を消して長く走ったときの送信・一時停止中の質問に `rideId` が付かないこと。家の中の短い走行では、plan 1 の走行の送信・端数のかたまり・記録中の質問の `rideId` が ✓。ブランチ `slice2-plan3a` は未マージ。後回しは Android #23〜#30） |
+| 3b | Android: タブ・ホームの走行のカードと SC-04 の質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し・issue #15・#19・#20（3a の `asks` の表を読むので後に置く） | 未作成 |
+| 4 | Android: 振り返り（MapLibre・SC-05・SC-06・SC-15・SC-07）。SC-05 の保存の状態は `rides.sentUpdatedAt`・`rejectedUpdatedAt`・`routeRejected` と `route_points.chunk` から出す（issue #27 を範囲に入れるか決める） | 未作成 |
 
 使い捨てのスパイクは置かない（理由は spec §11）。
 
@@ -85,7 +87,8 @@
 - Android: 走行の `updatedAt` は、状態・名前・区間が変わったときだけ進む。点の追加と生きていた時刻の書き込み（`addPoint`・`markAlive`）では進まない（距離は送らない前提。plan 3 の送信で距離を送るなら、別の印を足す。Android のコミット 46eea83）。
 - Android: サービスは `onStartCommand` で `rides.load()` を待ってから `startForeground` を呼ぶ。plan 3 でマイグレーションを足すとき、`load()` が遅くなると前面サービスの開始の時間切れ（約10秒）にかかるので、重い処理を入れない（スライス2 plan 1 の最終レビュー。adr/0006）。
 - Android: エミュレーターのテストで Back を押す前に、`onBackPressedDispatcher.hasEnabledCallbacks()` が false になるのを待つ。対話の画面の `BackHandler` は、状態が `IDLE` になってから1回描き直すまで残る（Android のコミット b7d6cba）。
-- Android（plan 3 の送信）: Backend の走行の受け口は、時刻をタイムゾーン付きの ISO 8601 で受ける（端末のミリ秒をそのまま変換してよい）。`status` は `recording`・`paused`・`ended` の小文字、`autoEnded` は終了の理由が自動のときだけ true（端末の停止は false）。区間は重なると 400 になるので、再開の時刻を前の区間の終わりより前にしない（Android の issue #22）。名前は前後の空白を落として40字まで。ルートの点の `segment` は区間の番号（0から）。正本は Backend の `openapi.yaml`。
+- Android の plan の実行: 使い捨てのフォルダで確かめたコードを本物のリポジトリで回すと、Gradle のビルドキャッシュ（フォルダをまたいで共有される）からテストの結果が返り、1秒ほどで終わる。テストを確かめるときは `--rerun` を付ける。Room のスキーマの版を新しく足した直後の1回目は「Missing file N.json」で落ち、2回目で通る（テストの資産が先に集められるため）。executing-plans の `task-start`・`task-done` は親のリポジトリの git を読むので、Android のコミットの範囲は ledger に手で書く（スライス2 plan 3a）。
+- Android: 版（`versionName`・`versionCode`）は、新しい plan の走行用のビルドを実機に入れる前に手で上げる。コミットの番号はアプリに出さない（利用者の決定。Android の README・spec 2 §7.9）。
 - Backend: ルートのかたまりのソートキーは `RIDE#<rideId>#ROUTE#<seq>` で、走行の `RIDE#<rideId>` と頭がそろう。スライス3で走行の一覧を読むとき、`begins_with(sk, "RIDE#")` だとかたまりも全部読むので、絞り込みか別の頭を考える（spec 2 §6.3）。
 - Backend: デプロイの直後の数秒は、新しい経路が 403（`Missing Authentication Token`）になることがある。smoke で新しい経路だけが 403 なら、1分ほど待って回し直す（スライス2 plan 2 で一度あった）。
 - Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
