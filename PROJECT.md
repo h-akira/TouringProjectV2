@@ -14,10 +14,9 @@
 
 ## 次にやること
 
-1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした）: 版 0.3.0（plan 3b のビルド。Android `033a709`。3a の送信を含む）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.2.0 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
-2. マージの順番（利用者が行う）: Android の PR #31 → 親の `slice2-plan3a` に `Android/` の指す先を進めるコミットを push → 親の PR #10。そのあと plan 3b（Android・親とも `slice2-plan3a` から切った `slice2-plan3b`。PR は Android #39・親 #11 で、`slice2-plan3a` に向けてある。3a のマージのあとは `main` に付け替える）を同じ順でマージする。push の前に `pre-push-secret-scan`。
-3. スライス2の plan 4（Android: 振り返り）を `superpowers:writing-plans` で書く。範囲を決めるときに Android の issue #27・#32〜#38 を見る（#38「プロセスが消されたあとに戻ると『準備中…』のまま止まる」は早めに直す）。
-4. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
+1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした。3a・3b はマージ済みなので、✗ が出たら main から直す）: 版 0.3.0（plan 3b のビルド。Android `033a709`。3a の送信を含む）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.3.0 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
+2. スライス2の plan 4（Android: 振り返り）を `superpowers:writing-plans` で書く。範囲を決めるときに Android の issue #27・#32〜#38 を見る（#38「プロセスが消されたあとに戻ると『準備中…』のまま止まる」は早めに直す）。
+3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
@@ -46,7 +45,7 @@
 
 [spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
 
-### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2 完了・plan 3a 実装済み（確認待ち）・plan 3b 実装済み）
+### 3. スライス2: 走行の記録と、地図での振り返り（plan 1・2 完了・plan 3a 実装済み（確認待ち）・plan 3b 完了）
 
 - **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
 - **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・日ごと・会話の詳細の地図（MapLibre と国土地理院のタイル）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
@@ -57,8 +56,8 @@
 |---|---|---|
 | [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | ✅ 完了（実機で ✓。ログでの裏付けの2点は adr/0006 の「確かめていないこと」。後回しは Android の issue #15〜#20） |
 | [2](docs/plans/2026-10-18-slice2-plan2-backend.md) | Backend（`rideId`・`GET /asks` の追加項目・走行の `PUT`・Backend の issue #4 Agent のセッションをユーザーごとに分ける）。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 17/17。後回しは Backend #12〜#14・Agent #7・Android #22） |
-| [3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md) | Android: 送信の待ち行列（プロセスの中で spec §5.3 の契機に送る）・質問の保存（Room 版2）と `rideId`・設定の版の表示（spec §7.9。実行中に利用者が足した）・issue #12・#16・#18・#22 | 実装済み（確認待ち: 実際の走行で、300点のかたまり・画面を消して長く走ったときの送信・一時停止中の質問に `rideId` が付かないこと。家の中の短い走行では、plan 1 の走行の送信・端数のかたまり・記録中の質問の `rideId` が ✓。ブランチ `slice2-plan3a` は未マージ。後回しは Android #23〜#30） |
-| [3b](docs/plans/2026-10-20-slice2-plan3b-tabs-and-ride-settings.md) | Android: タブ（記録のタブは仮の画面）・ホームの走行のカードと SC-04 の質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し・issue #15・#19・#20（3a の `asks` の表を読むので後に置く） | 実装済み（実機で ✓。3a のあとにマージする。後回しは Android #32〜#38） |
+| [3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md) | Android: 送信の待ち行列（プロセスの中で spec §5.3 の契機に送る）・質問の保存（Room 版2）と `rideId`・設定の版の表示（spec §7.9。実行中に利用者が足した）・issue #12・#16・#18・#22 | 実装済み（確認待ち: 実際の走行で、300点のかたまり・画面を消して長く走ったときの送信・一時停止中の質問に `rideId` が付かないこと。家の中の短い走行では、plan 1 の走行の送信・端数のかたまり・記録中の質問の `rideId` が ✓。マージ済み。後回しは Android #23〜#30） |
+| [3b](docs/plans/2026-10-20-slice2-plan3b-tabs-and-ride-settings.md) | Android: タブ（記録のタブは仮の画面）・ホームの走行のカードと SC-04 の質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し・issue #15・#19・#20（3a の `asks` の表を読むので後に置く） | ✅ 完了（実機で ✓。マージ済み。後回しは Android #32〜#38） |
 | 4 | Android: 振り返り（MapLibre・SC-05・SC-06・SC-15・SC-07）。SC-05 の保存の状態は `rides.sentUpdatedAt`・`rejectedUpdatedAt`・`routeRejected` と `route_points.chunk` から出す（issue #27 を範囲に入れるか決める） | 未作成 |
 
 使い捨てのスパイクは置かない（理由は spec §11）。
