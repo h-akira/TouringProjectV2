@@ -14,10 +14,9 @@
 
 ## 次にやること
 
-1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした。3a・3b はマージ済みなので、✗ が出たら main から直す）: 版 0.3.1（plan 3b と #38 の修正のビルド。Android `51259c9`。3a の送信を含む）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.3.1 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
-2. Android #38（プロセスが消されたあとに戻ると「準備中…」のまま止まる）の修正のマージ（利用者が明示したとき）: plan の外の修正として、Android・親とも `fix-restore-ready` で直した（Android `main..51259c9`。実機の 0.3.1 で、走行していないときと一時停止中に SC-04 を開いたままのときの2つを ✓）。順番は Android の PR → 親に `Android/` の指す先を進めるコミットを push → 親の PR。
-3. スライス2の plan 4a を `superpowers:writing-plans` で書く。範囲は下の plan 表（利用者と決め済み）。`maplibre-compose` を使うかは使い捨てのフォルダで組んで決める（spec 2 §12）。
-4. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
+1. スライス2 plan 3a の走行での確かめ（利用者。天気で後回しにした。3a・3b はマージ済みなので、✗ が出たら main から直す）: 版 0.3.1（plan 3b と Android #38 の修正のビルド。Android `51259c9`。3a の送信を含む。#38 はプロセスを消して戻す確かめを実機で ✓、マージ済み）が実機に入っている。走る前に端末のログの置き場を `adb logcat -G 16M` で広げる（端末の設定を変えるので、利用者に確かめる）。設定 → バージョンが 0.3.1 → 走行を開始し、ナビを前面・画面を消して25分以上（ルートの点を300より多く）→ 記録中に1回質問 → 一時停止して、一時停止中に1回質問 → 再開して少し走る → 終了。そのあと AI がユーザー名を聞き、`AWS_PROFILE=touring` で DynamoDB（`dynamodb-trv2-dev-records`、`pk = USER#<名前>`、`sk` が `RIDE#`・`ASK#` で始まるもの）を読み、走行が `ended`・かたまりが `#ROUTE#00000` から並び最後以外は300点・記録中の質問にだけその走行の `rideId` があることを確かめる。端末のログの `trv2.sync`（`sync_failed`・`sync_refused`）も見る。✗ が出たら `superpowers:systematic-debugging`。
+2. スライス2の plan 4a を `superpowers:writing-plans` で書く。範囲は下の plan 表（利用者と決め済み）。`maplibre-compose` を使うかは使い捨てのフォルダで組んで決める（spec 2 §12）。
+3. スライス1の完了の判定（利用者の作業）: React Native 版は端末から外したので、移行の plan 2 の走行用のビルド（ネイティブ版）で実際に走り、[spec 1](docs/specs/2026-10-16-slice1-design.md) §1 を確かめる。✗ が出たら `superpowers:systematic-debugging`（直す先はネイティブ版。振る舞いの設計に響くなら移行とスライス2の spec を見直す）。
 
 ## サブプロジェクト
 
