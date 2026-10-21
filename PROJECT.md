@@ -14,7 +14,8 @@
 
 ## 次にやること
 
-1. スライス3 plan 1（Backend）を実行する。plan の承認と実行の方法（これまでは Native）は利用者に確かめる。デプロイは plan の Task 8 で利用者の了承を取ってから。
+1. スライス3 plan 1 の最終レビューの直し（Backend のコミット 0b0be30。走行の削除で子の記録を一貫した読み出しで読む）を、利用者の了承を取ってデプロイし、smoke を回す。そのあと Backend → 親の順にマージする（利用者が行う。push の前に `pre-push-secret-scan`）。
+2. スライス3 plan 2（Android: メモと削除・送信の広げ方）を `superpowers:writing-plans` で書く。書く前に Backend #16（2000字の数え方）を読み、Android もコードポイントで抑える。
 
 ## サブプロジェクト
 
@@ -70,7 +71,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | 計画済み |
+| [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | 実装済み（確認待ち: 最終レビューの直しのデプロイと smoke。それより前の版はデプロイ済みで smoke 30/30） |
 | 2 | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | 未作成 |
 | 3 | Android: 文字の地点メモ（SC-19・ピンと切り替え・時系列・地点メモの削除）・#49・#51 | 未作成 |
 | 4 | Android: 声の地点メモ（SC-19 でのインカムのボタンを含む）。最後に spec §1 の判定 | 未作成 |
@@ -104,7 +105,8 @@
 - Android: エミュレーターのテストで Back を押す前に、`onBackPressedDispatcher.hasEnabledCallbacks()` が false になるのを待つ。対話の画面の `BackHandler` は、状態が `IDLE` になってから1回描き直すまで残る（Android のコミット b7d6cba）。
 - Android の plan の実行: 使い捨てのフォルダで確かめたコードを本物のリポジトリで回すと、Gradle のビルドキャッシュ（フォルダをまたいで共有される）からテストの結果が返り、1秒ほどで終わる。テストを確かめるときは `--rerun` を付ける。Room のスキーマの版を新しく足した直後の1回目は「Missing file N.json」で落ち、2回目で通る（テストの資産が先に集められるため）。executing-plans の `task-start`・`task-done` は親のリポジトリの git を読むので、Android のコミットの範囲は ledger に手で書く（スライス2 plan 3a）。
 - Android: 版（`versionName`・`versionCode`）は、新しい plan の走行用のビルドを実機に入れる前に手で上げる（plan 4a は 0.4.0）。plan の外の修正を入れるときは3つ目の数を上げる（0.3.0 → 0.3.1）。コミットの番号はアプリに出さない（利用者の決定。Android の README・spec 2 §7.9）。
-- Backend: デプロイの直後の数秒は、新しい経路が 403（`Missing Authentication Token`）になることがある。smoke で新しい経路だけが 403 なら、1分ほど待って回し直す（スライス2 plan 2 で一度あった）。
+- Backend: デプロイの直後の数秒は、新しい経路が 403（`Missing Authentication Token`）になることがある。smoke で新しい経路だけが 403 なら、1分ほど待って回し直す（スライス2 plan 2 と、スライス3 plan 1 の地点メモの経路で起きた。1回目は通り、2回目・3回目が 403 になることもある）。
+- Backend: 削除の跡を見て書く書き込み（走行・ルート・地点メモ・会話のメモ）は、書き込みと跡の確かめを1つのトランザクションにしている（`store._write_unless_deleted`）。テーブルの resource の `meta.client` は値の型付けを自分で行うので、トランザクションには素の値を渡す（型付けした値を渡すと、取り消しの理由が `TypeError` になる）。走行の削除で子の記録を集める問い合わせは、一貫した読み出しにする（moto はいつも一貫しているので、テストでは引数を確かめる。スライス3 plan 1 の最終レビュー）。後回しは Backend #16〜#19。
 - Android: Kotlin の差分コンパイルは、interface に足したメソッドを実装していない作り物のテストを見逃して通すことがある。plan の終わりの確かめは `./gradlew clean` から回す（スライス2 plan 4a）。
 - Android: Robolectric で `@Config(qualifiers = ...)` で画面を大きくすると、ポップアップ（メニュー・ダイアログ）のテストが止まらなくなる（メモリが尽きる）。画面の外の行は `performScrollToNode` で出す（スライス2 plan 4a）。
 - Android: MapLibre の `queryRenderedFeatures` は、地図が一度描き終える前に呼ぶとネイティブのコードが落ちる。`RouteMap` は、押した判定の受け口とテストへの `onMap` を、最初に描き終えて落ち着いたとき（`OnDidBecomeIdle`）に付ける。MapLibre は Robolectric では動かないので、画面は地図を枠（`MapSlot`）で受け、JVM のテストは作り物の地図を渡す（スライス2 plan 4a）。
