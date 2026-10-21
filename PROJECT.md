@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス3 plan 1 の最終レビューの直し（Backend のコミット 0b0be30。走行の削除で子の記録を一貫した読み出しで読む）を、利用者の了承を取ってデプロイし、smoke を回す。そのあと Backend → 親の順にマージする（利用者が行う。push の前に `pre-push-secret-scan`）。
+1. スライス3 plan 1 をマージする（利用者が行う）。Backend の PR #20 → 親の PR #15 の順。親は、Backend のマージ後の main を指すように submodule を進めるコミットを足してからマージする。
 2. スライス3 plan 2（Android: メモと削除・送信の広げ方）を `superpowers:writing-plans` で書く。書く前に Backend #16（2000字の数え方）を読み、Android もコードポイントで抑える。
 
 ## サブプロジェクト
@@ -71,7 +71,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | 実装済み（確認待ち: 最終レビューの直しのデプロイと smoke。それより前の版はデプロイ済みで smoke 30/30） |
+| [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 30/30。マージ待ち: Backend の PR #20 → 親の PR #15。後回しは Backend #16〜#19） |
 | 2 | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | 未作成 |
 | 3 | Android: 文字の地点メモ（SC-19・ピンと切り替え・時系列・地点メモの削除）・#49・#51 | 未作成 |
 | 4 | Android: 声の地点メモ（SC-19 でのインカムのボタンを含む）。最後に spec §1 の判定 | 未作成 |
