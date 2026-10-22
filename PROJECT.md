@@ -14,7 +14,8 @@
 
 ## 次にやること
 
-1. スライス3 plan 3（Android: 文字の地点メモ）を実行する（[plan](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md)。実行の方法は利用者が選ぶ）。
+1. スライス3 plan 3 の実機の確認（[plan](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md) の Task 10。版 0.7.0 を実機に入れて利用者が確かめ、AI が DynamoDB を読む）。✓ なら push と PR・マージ（利用者が明示したとき。Android → 親の順）。
+2. スライス3 plan 4（Android: 声の地点メモ）を `superpowers:writing-plans` で書く。Android #57 を範囲に入れる（SC-19 を触るため）。最後に spec §1 の判定を実機で確かめる。
 
 ## サブプロジェクト
 
@@ -72,7 +73,7 @@
 |---|---|---|
 | [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 30/30。マージ済み。後回しは Backend #16〜#19） |
 | [2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md) | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | ✅ 完了（2026-10-22 の実機の確認 ✓。DynamoDB にメモ・会話と走行の削除の跡が届いた。マージ済み。後回しは Android #53〜#55） |
-| [3](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md) | Android: 文字の地点メモ（SC-19・ホームの入口・送信・ピンと切り替え・時系列・地点メモの削除）・#49・#51・#54・#55 | 計画済み |
+| [3](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md) | Android: 文字の地点メモ（SC-19・ホームの入口・送信・ピンと切り替え・時系列・地点メモの削除）・#49・#51・#54・#55 | 実装済み（確認待ち: 実機の確認。JVM のテスト493件・エミュレーターのテスト6件は ✓。後回しは Android #57〜#59） |
 | 4 | Android: 声の地点メモ（SC-19 でのインカムのボタンを含む）。最後に spec §1 の判定 | 未作成 |
 
 スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
@@ -112,7 +113,8 @@
 - Android: MapLibre の呼び出し（スタイル・ソース・カメラ）は UI スレッドだけで行う。`withContext(Dispatchers.Default)` から戻った先は、テストの仕組みの下では UI スレッドとは限らない。`RouteMap` は地図に触る処理を `withContext(Dispatchers.Main)` に置く（スライス2 plan 4b）。
 - Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
 
-- Android（スライス3 plan 3 に効く。plan 2 で分かったこと）: 地点メモの表 `notes`（`NoteEntity`）は Room の版5で作ってあり、plan 3 ではマイグレーションが要らない（DAO だけ足す）。地点メモの削除は、`RideSync.sendDeletion` に `note` の分岐（`DELETE /rides/{rideId}/notes/{noteId}`）と `DeleteKind.NOTE` を足す（足し忘れると送信が止まる。Android #54）。一覧の「未送信あり」（`RideRow`）に地点メモの未送信も数える。走行の削除（`RideDao.deleteEnded`）は `notes` もすでに消す。
+- Android（スライス3 plan 3）: ホームの「📝 地点メモ」は、進行方向のカードが無いので「インカムのボタンで話せます」の行の右に置いた（spec §7.1 はカードの右）。進行方向のカードを作るときに移す。SC-19 は SC-08 と共通の `MemoEditor` の上にある（plan 4 の声の入力は、ここに足す）。質問の一巡の終わりに走行の行が無ければ質問を書かない（`AskDao.keep`、Android #54）。
+- Android のテスト（スライス3 plan 3）: Robolectric では、入力欄にフォーカスがあるあいだの最初の Back を入力欄が受けるので、破棄の確認は ✕ で確かめる。閉じた Room への最初の素の問い合わせは取り消しの例外（`JobCancellationException`）になるので、読み出しの失敗は DAO を委譲で包んで作る（`RoomNotesTest`）。`RideForegroundServiceTest` の1件がまれに落ちる（Android #59）。
 - Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
 - Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
