@@ -14,8 +14,7 @@
 
 ## 次にやること
 
-1. スライス3 plan 2 を Android → 親の順にマージする（利用者の指示で。push の前に `pre-push-secret-scan`。親は submodule を Android のマージ後の main に進めてからマージ）。
-2. スライス3 plan 3（Android: 文字の地点メモ）を `superpowers:writing-plans` で書く。下の「持ち越し」の plan 3 の項と、Android #49・#51・#54・#55 を範囲に入れる。
+1. スライス3 plan 3（Android: 文字の地点メモ）を `superpowers:writing-plans` で書く。下の「持ち越し」の plan 3 の項と、Android #49・#51・#54・#55 を範囲に入れる。
 
 ## サブプロジェクト
 
@@ -72,7 +71,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 30/30。マージ済み。後回しは Backend #16〜#19） |
-| [2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md) | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | ✅ 完了（2026-10-22 の実機の確認 ✓。DynamoDB にメモ・会話と走行の削除の跡が届いた。後回しは Android #53〜#55） |
+| [2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md) | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | ✅ 完了（2026-10-22 の実機の確認 ✓。DynamoDB にメモ・会話と走行の削除の跡が届いた。マージ済み。後回しは Android #53〜#55） |
 | 3 | Android: 文字の地点メモ（SC-19・ピンと切り替え・時系列・地点メモの削除）・#49・#51 | 未作成 |
 | 4 | Android: 声の地点メモ（SC-19 でのインカムのボタンを含む）。最後に spec §1 の判定 | 未作成 |
 
