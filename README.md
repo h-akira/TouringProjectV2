@@ -15,7 +15,7 @@ AI は現在地と進行方向を踏まえて答え、質問と回答は走っ�
 | `Backend/` | API（API Gateway＋Lambda・SAM・東京） | `TouringProjectV2_Backend` |
 | `Agent/` | エージェント（Bedrock AgentCore・Strands・us-east-1） | `TouringProjectV2_Agent` |
 | `CICD/` | Agent・Backend のデプロイ（非公開） | `TouringProjectV2_CICD` |
-| [docs/](docs/README.md) | 要件・方針・契約の現行版。[docs/init/](docs/init/README.md) は初期検討のスナップショット | — |
+| [docs/](docs/README.md) | 要件・方針・契約（API 仕様を含む）・基本設計の現行版。[docs/init/](docs/init/README.md) は初期検討のスナップショット | — |
 | [adr/](adr/README.md) | 決定の記録 | — |
 
 ## 取得する
