@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス4 の [plan 2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md)（Android）を実行する（利用者が plan を確かめ、実行の方法を選んでから）。最後に実機の確認（Task 8）。
+1. スライス4 の plan 2 の実機の確認（[plan 2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md) の Task 8。版 0.9.0 を実機に入れて、機内モードでの質問から、画面を消したまま通信が戻ったときの送信までを確かめる）。✓ ならマージし、plan 3（Android: 引き継ぎの読み込み・SC-14）を `superpowers:writing-plans` で書く。
 
 ## サブプロジェクト
 
@@ -77,7 +77,7 @@
 
 スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
 
-### 5. スライス4: 同期の仕上げ（plan 1 完了。plan 2 計画済み）
+### 5. スライス4: 同期の仕上げ（plan 1 完了。plan 2 実装済み・実機の確認待ち）
 
 - **目的**: 通信が無いときでも記録が欠けずにクラウドへ届き、端末を替えても入れ直しても記録が戻る。
 - **範囲の要点**: 質問できなかった地点（US-C-09。届かなかった質問だけ）、通信が戻ったら送る（プロセスの中。WorkManager は使わない）、引き継ぎの読み込み（ユーザー名を変えるときと SC-14 の手動だけ。`GET /records`）と突き合わせの決まり（[adr/0010](adr/0010-read-the-cloud-only-when-taking-over.md)）、SC-14、Android #28・#53・#58・#62、Backend #2・#3・#16・#17・#18・#19（詳しくは [spec](docs/specs/2026-10-22-slice4-design.md) §2）
@@ -87,7 +87,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 39/39。マージ済み。後回しは Backend #21〜#25） |
-| [2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md) | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | 計画済み |
+| [2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md) | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | 実装済み（確認待ち: 実機の確認 Task 8。最終レビューは merge 可。後回しは Android #64〜#69） |
 | 3 | Android: 引き継ぎの読み込み（SC-18・DL-03）・SC-14。最後に spec §1 の判定 | 未作成 |
 
 候補の「同期の仕上げ」と「準備と入力の補い」は分け、同期の仕上げを先にした（2026-10-22、利用者と決めた）。US-C-09 が Must で、スライス3の送信と削除の跡の決まりが新しいうちに仕上げられ、準備と入力の補いの SC-01 の引き継ぎの入口が、ここで作る読み込みを呼べるため。plan の順番の理由は spec §11。
@@ -134,6 +134,7 @@
 - Android（スライス3 plan 4）: SC-19 の声の入力（`VoiceInput`）は、試し録りと同じく専用の経路の切り替えと録音の部品を持つが、その下の `AudioRoute` はアプリに1つ。SC-19 を離れたら待っている処理を取り消してすぐ経路を返し、それでも返しきるまで（音声認識の経路の準備は最大4秒、取り消せない）は `busy` で、押下の行き先が質問を始めない。SC-19 の `attach` は札を返し、`detach` はその札のときだけ効く（閉じていく画面の後始末が、新しく開いた画面からインカムのボタンを取り上げないように）。SC-12 の試し録りは `voice.busy` を見ていない（最終レビューで、起きにくいとして残した）。
 - Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
 - Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
+- Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。plan 3 の読み込みで Backend の `offline` の質問を入れるときも、この形に入れる。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。plan 3 の読み込みの間に送信を止めるのは、この `RideSync` に足す。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
