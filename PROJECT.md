@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス4 の [plan 1](docs/plans/2026-10-22-slice4-plan1-backend.md)（Backend）を実行する（利用者が plan を確かめ、実行の方法を選んでから）。デプロイは Task 8 で利用者の確認を取る。
+1. スライス4 の plan 2（Android: 質問できなかった地点・通信が戻ったら送る・#28・#53・#58・#62）を `superpowers:writing-plans` で書く。範囲の issue の本文は書く前に読む。
 
 ## サブプロジェクト
 
@@ -77,7 +77,7 @@
 
 スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
 
-### 5. スライス4: 同期の仕上げ（plan 1 計画済み）
+### 5. スライス4: 同期の仕上げ（plan 1 完了。plan 2 を作る）
 
 - **目的**: 通信が無いときでも記録が欠けずにクラウドへ届き、端末を替えても入れ直しても記録が戻る。
 - **範囲の要点**: 質問できなかった地点（US-C-09。届かなかった質問だけ）、通信が戻ったら送る（プロセスの中。WorkManager は使わない）、引き継ぎの読み込み（ユーザー名を変えるときと SC-14 の手動だけ。`GET /records`）と突き合わせの決まり（[adr/0010](adr/0010-read-the-cloud-only-when-taking-over.md)）、SC-14、Android #28・#53・#58・#62、Backend #2・#3・#16・#17・#18・#19（詳しくは [spec](docs/specs/2026-10-22-slice4-design.md) §2）
@@ -86,7 +86,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | 計画済み |
+| [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 39/39。後回しは Backend #21〜#25） |
 | 2 | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | 未作成 |
 | 3 | Android: 引き継ぎの読み込み（SC-18・DL-03）・SC-14。最後に spec §1 の判定 | 未作成 |
 
@@ -122,6 +122,7 @@
 - Android: 版（`versionName`・`versionCode`）は、新しい plan の走行用のビルドを実機に入れる前に手で上げる（plan 4a は 0.4.0）。plan の外の修正を入れるときは3つ目の数を上げる（0.3.0 → 0.3.1）。コミットの番号はアプリに出さない（利用者の決定。Android の README・spec 2 §7.9）。
 - Backend: デプロイの直後の数秒は、新しい経路が 403（`Missing Authentication Token`）になることがある。smoke で新しい経路だけが 403 なら、1分ほど待って回し直す（スライス2 plan 2 と、スライス3 plan 1 の地点メモの経路で起きた。1回目は通り、2回目・3回目が 403 になることもある）。
 - Backend: 削除の跡を見て書く書き込み（走行・ルート・地点メモ・会話のメモ）は、書き込みと跡の確かめを1つのトランザクションにしている（`store._write_unless_deleted`）。テーブルの resource の `meta.client` は値の型付けを自分で行うので、トランザクションには素の値を渡す（型付けした値を渡すと、取り消しの理由が `TypeError` になる）。走行の削除で子の記録を集める問い合わせは、一貫した読み出しにする（moto はいつも一貫しているので、テストでは引数を確かめる。スライス3 plan 1 の最終レビュー）。後回しは Backend #16〜#19。
+- Backend（スライス4 plan 1）: `GET /records` の項目は、値が無ければ `null` で返す（入れ子の区間の `endedAt`・点の `accuracy` も）。整数に等しい数は整数で返る（`5.0` が `5`）ので、Android は数を Double として読む。質問の `status` は `pending` と `processing` を見分けず `processing`（spec §6.1 の追記）。SQS に積めなかった質問は Backend に残さず 503 を返すので、Android は 503 を通信の失敗として質問できなかった地点を残す。
 - Android: Kotlin の差分コンパイルは、interface に足したメソッドを実装していない作り物のテストを見逃して通すことがある。plan の終わりの確かめは `./gradlew clean` から回す（スライス2 plan 4a）。
 - Android: Robolectric で `@Config(qualifiers = ...)` で画面を大きくすると、ポップアップ（メニュー・ダイアログ）のテストが止まらなくなる（メモリが尽きる）。画面の外の行は `performScrollToNode` で出す（スライス2 plan 4a）。
 - Android: MapLibre の `queryRenderedFeatures` は、地図が一度描き終える前に呼ぶとネイティブのコードが落ちる。`RouteMap` は、押した判定の受け口とテストへの `onMap` を、最初に描き終えて落ち着いたとき（`OnDidBecomeIdle`）に付ける。MapLibre は Robolectric では動かないので、画面は地図を枠（`MapSlot`）で受け、JVM のテストは作り物の地図を渡す（スライス2 plan 4a）。
