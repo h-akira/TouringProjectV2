@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス3 plan 2（Android: メモと削除・送信の広げ方）を `superpowers:writing-plans` で書く。書く前に Backend #16（2000字の数え方）を読み、Android もコードポイントで抑える。
+1. スライス3 plan 3（Android: 文字の地点メモ）を `superpowers:writing-plans` で書く。下の「持ち越し」の plan 3 の項と、Android #49・#51・#54・#55 を範囲に入れる。
 
 ## サブプロジェクト
 
@@ -71,7 +71,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 30/30。マージ済み。後回しは Backend #16〜#19） |
-| 2 | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | 未作成 |
+| [2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md) | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | ✅ 完了（2026-10-22 の実機の確認 ✓。DynamoDB にメモ・会話と走行の削除の跡が届いた。マージ済み。後回しは Android #53〜#55） |
 | 3 | Android: 文字の地点メモ（SC-19・ピンと切り替え・時系列・地点メモの削除）・#49・#51 | 未作成 |
 | 4 | Android: 声の地点メモ（SC-19 でのインカムのボタンを含む）。最後に spec §1 の判定 | 未作成 |
 
@@ -81,7 +81,7 @@
 
 | 候補 | 出どころ |
 |---|---|
-| 同期の仕上げ（質問できなかった地点・通信できないときの後送の仕上げ・クラウドからの読み込みと引き継ぎ・突き合わせの決まり・SC-14・走行の一覧を読むときの絞り込み） | spec 3 §2 |
+| 同期の仕上げ（質問できなかった地点・通信できないときの後送の仕上げ（通信が戻っただけでは送らず、アプリが前面に来たときなどに送ることを、スライス3 plan 2 の実機で確かめた）・クラウドからの読み込みと引き継ぎ・突き合わせの決まり・SC-14・走行の一覧を読むときの絞り込み） | spec 3 §2 |
 | 準備と入力の補い（SC-01・SC-11・文字での質問・文ごとの読み上げ・やめた質問の記録） | spec 2 §2 |
 | CICD による自動デプロイ（随時） | 同上 |
 | 後回しの指摘（関わるスライスで直す） | 各ユニットの GitHub issue |
@@ -111,6 +111,11 @@
 - Android: MapLibre の `queryRenderedFeatures` は、地図が一度描き終える前に呼ぶとネイティブのコードが落ちる。`RouteMap` は、押した判定の受け口とテストへの `onMap` を、最初に描き終えて落ち着いたとき（`OnDidBecomeIdle`）に付ける。MapLibre は Robolectric では動かないので、画面は地図を枠（`MapSlot`）で受け、JVM のテストは作り物の地図を渡す（スライス2 plan 4a）。
 - Android: MapLibre の呼び出し（スタイル・ソース・カメラ）は UI スレッドだけで行う。`withContext(Dispatchers.Default)` から戻った先は、テストの仕組みの下では UI スレッドとは限らない。`RouteMap` は地図に触る処理を `withContext(Dispatchers.Main)` に置く（スライス2 plan 4b）。
 - Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
+
+- Android（スライス3 plan 3 に効く。plan 2 で分かったこと）: 地点メモの表 `notes`（`NoteEntity`）は Room の版5で作ってあり、plan 3 ではマイグレーションが要らない（DAO だけ足す）。地点メモの削除は、`RideSync.sendDeletion` に `note` の分岐（`DELETE /rides/{rideId}/notes/{noteId}`）と `DeleteKind.NOTE` を足す（足し忘れると送信が止まる。Android #54）。一覧の「未送信あり」（`RideRow`）に地点メモの未送信も数える。走行の削除（`RideDao.deleteEnded`）は `notes` もすでに消す。
+- Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
+- Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
+- Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
 
