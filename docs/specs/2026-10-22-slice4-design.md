@@ -165,6 +165,8 @@ flowchart LR
 - 項目の名前と型の正本は `openapi.yaml`。07 に UC を足す（Backend の plan で）
 - `cursor` は `LastEvaluatedKey` を符号化したもの。パーティションキーは `x-user-name` から作り直し、`cursor` の中のものは使わない（他人のパーティションを読ませない）
 
+- （2026-10-22 追記、plan 1 を書くときに具体化）`deleted` の跡の種類は、項目の種類の `kind` と重なるので `target` に入れる（`{kind: "deleted", target, id, rideId, deletedAt}`）。`ask` は、端末が質問を持つのに要る項目（`location`・`inputType`・`conversationId`・`newConversation`・`answeredAt`・`question`・質問できなかった地点の `updatedAt`）を足し、音声の取り先と段ごとの時刻は返さない。値が無い項目は `null` で返す。項目の一覧は plan 1 と `openapi.yaml`
+
 スライス3 §12 の「走行の一覧を読むときの絞り込み」は、パーティションを全部読むので要らなくなった（§12）。
 
 ### 6.3 Android: 読み込みの係

@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス4の [spec](docs/specs/2026-10-22-slice4-design.md)（承認済み）の plan 1（Backend）を `superpowers:writing-plans` で書く。範囲に入れた issue（spec §2）の本文は、その plan を書く前に読む。
+1. スライス4 の [plan 1](docs/plans/2026-10-22-slice4-plan1-backend.md)（Backend）を実行する（利用者が plan を確かめ、実行の方法を選んでから）。デプロイは Task 8 で利用者の確認を取る。
 
 ## サブプロジェクト
 
@@ -77,7 +77,7 @@
 
 スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
 
-### 5. スライス4: 同期の仕上げ（spec 承認済み。plan 1 を作る）
+### 5. スライス4: 同期の仕上げ（plan 1 計画済み）
 
 - **目的**: 通信が無いときでも記録が欠けずにクラウドへ届き、端末を替えても入れ直しても記録が戻る。
 - **範囲の要点**: 質問できなかった地点（US-C-09。届かなかった質問だけ）、通信が戻ったら送る（プロセスの中。WorkManager は使わない）、引き継ぎの読み込み（ユーザー名を変えるときと SC-14 の手動だけ。`GET /records`）と突き合わせの決まり（[adr/0010](adr/0010-read-the-cloud-only-when-taking-over.md)）、SC-14、Android #28・#53・#58・#62、Backend #2・#3・#16・#17・#18・#19（詳しくは [spec](docs/specs/2026-10-22-slice4-design.md) §2）
@@ -86,7 +86,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| 1 | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend の issue・smoke・07。デプロイと smoke まで | 未作成 |
+| [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | 計画済み |
 | 2 | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | 未作成 |
 | 3 | Android: 引き継ぎの読み込み（SC-18・DL-03）・SC-14。最後に spec §1 の判定 | 未作成 |
 
