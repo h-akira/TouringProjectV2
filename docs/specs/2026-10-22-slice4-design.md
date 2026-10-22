@@ -1,7 +1,7 @@
 # スライス4 設計: 同期の仕上げ
 
 - 日付: 2026-10-22
-- 状態: 承認待ち
+- 状態: 承認済み（2026-10-22）
 - 前提の文書: [docs/](../) の現行版（01〜05・07）、[スライス2の設計](2026-10-17-slice2-design.md)（§5 送信）、[スライス3の設計](2026-10-21-slice3-design.md)（§5 送信・§6 Backend）、[画面モック](../mock/index.html)（SC-07・SC-14・SC-18・DL-03 の仕様メモ）、[adr/0008](../../adr/0008-ask-only-while-recording.md)、[adr/0009](../../adr/0009-keep-deletion-marks-in-the-cloud.md)、[adr/0010](../../adr/0010-read-the-cloud-only-when-taking-over.md)
 
 ## 1. 目的と成功の判定
