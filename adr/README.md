@@ -14,3 +14,4 @@
 | [0007](0007-stay-home-after-ending-a-ride.md) | 走行を「終了して保存」したあとは、ホームに残る | 採用 |
 | [0008](0008-ask-only-while-recording.md) | 質問は走行の記録中だけ受け、日ごとの振り返りをやめる | 採用 |
 | [0009](0009-keep-deletion-marks-in-the-cloud.md) | 削除はクラウドにも跡を残し、跡のある記録への置き直しを断る | 採用 |
+| [0010](0010-read-the-cloud-only-when-taking-over.md) | クラウドの記録は引き継ぎのときだけ読み、新しいほうを勝たせて突き合わせる | 採用 |
