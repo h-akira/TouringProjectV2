@@ -14,7 +14,8 @@
 
 ## 次にやること
 
-1. スライス4 の [plan 3](docs/plans/2026-10-23-slice4-plan3-takeover.md)（Android: 引き継ぎの読み込み・SC-14・#64〜#67。最後に spec §1 の判定）を実行する。実行の方法は利用者が選ぶ（これまでは Native の `superpowers:executing-plans`）。
+1. スライス4 plan 3 のマージ（利用者が明示したとき。Android の `slice4-plan3` を先に、親は submodule を進めるコミットを足してから）。
+2. 次のスライス（候補の「準備と入力の補い」）の範囲を `superpowers:brainstorming` で決める。範囲を決めるときに後回しの指摘（Android #72〜#77 など）を見る。
 
 ## サブプロジェクト
 
@@ -77,7 +78,7 @@
 
 スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
 
-### 5. スライス4: 同期の仕上げ（plan 1・2 完了。plan 3 計画済み）
+### 5. スライス4: 同期の仕上げ（✅ 完了。2026-10-23 の実機で spec §1 を確かめた）
 
 - **目的**: 通信が無いときでも記録が欠けずにクラウドへ届き、端末を替えても入れ直しても記録が戻る。
 - **範囲の要点**: 質問できなかった地点（US-C-09。届かなかった質問だけ）、通信が戻ったら送る（プロセスの中。WorkManager は使わない）、引き継ぎの読み込み（ユーザー名を変えるときと SC-14 の手動だけ。`GET /records`）と突き合わせの決まり（[adr/0010](adr/0010-read-the-cloud-only-when-taking-over.md)）、SC-14、Android #28・#53・#58・#62、Backend #2・#3・#16・#17・#18・#19（詳しくは [spec](docs/specs/2026-10-22-slice4-design.md) §2）
@@ -88,7 +89,7 @@
 |---|---|---|
 | [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 39/39。マージ済み。後回しは Backend #21〜#25） |
 | [2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md) | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | ✅ 完了（2026-10-22 の実機の確認 ✓。版 0.9.0。機内モードの質問2件が質問できなかった地点として残り、画面を消したまま機内モードを外すと、前面に出さずに走行と地点（住所つき）が DynamoDB に届いた。後回しは Android #64〜#69） |
-| [3](docs/plans/2026-10-23-slice4-plan3-takeover.md) | Android: 引き継ぎの読み込み（SC-18・DL-03・突き合わせ）・SC-14・#64〜#67。最後に spec §1 の判定 | 計画済み |
+| [3](docs/plans/2026-10-23-slice4-plan3-takeover.md) | Android: 引き継ぎの読み込み（SC-18・DL-03・突き合わせ）・SC-14・#64〜#67。最後に spec §1 の判定 | ✅ 完了（2026-10-23 の実機の確認 ✓。版 0.10.0。SC-14・読み直し・名前の切り替えと戻し・入れ直して同じ名前で記録が戻ることを確かめ、読み込みの前後で DynamoDB の件数が変わらない（送り返さない）ことも見た。後回しは Android #72〜#77） |
 
 候補の「同期の仕上げ」と「準備と入力の補い」は分け、同期の仕上げを先にした（2026-10-22、利用者と決めた）。US-C-09 が Must で、スライス3の送信と削除の跡の決まりが新しいうちに仕上げられ、準備と入力の補いの SC-01 の引き継ぎの入口が、ここで作る読み込みを呼べるため。plan の順番の理由は spec §11。
 
@@ -134,7 +135,8 @@
 - Android（スライス3 plan 4）: SC-19 の声の入力（`VoiceInput`）は、試し録りと同じく専用の経路の切り替えと録音の部品を持つが、その下の `AudioRoute` はアプリに1つ。SC-19 を離れたら待っている処理を取り消してすぐ経路を返し、それでも返しきるまで（音声認識の経路の準備は最大4秒、取り消せない）は `busy` で、押下の行き先が質問を始めない。SC-19 の `attach` は札を返し、`detach` はその札のときだけ効く（閉じていく画面の後始末が、新しく開いた画面からインカムのボタンを取り上げないように）。SC-12 の試し録りは `voice.busy` を見ていない（最終レビューで、起きにくいとして残した）。
 - Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
 - Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
-- Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。plan 3 の読み込みで Backend の `offline` の質問を入れるときも、この形に入れる。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。plan 3 の読み込みの間に送信を止めるのは、この `RideSync` に足す。
+- Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。`RideSync` の引数は plan 3 で `store, api, online, saved, log` の順になった。
+- Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。SC-01 の引き継ぎの入口は `peek` と `switchTo` を呼べばよい。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
