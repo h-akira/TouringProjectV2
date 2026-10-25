@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス5 の [plan 1](docs/plans/2026-10-25-slice5-plan1-backend.md)（Backend）を実行する。デプロイは Task 9 で利用者の了承を取ってから。
+1. plan 1 のデプロイと smoke（[plan 1](docs/plans/2026-10-25-slice5-plan1-backend.md) の Task 9）。デプロイは利用者の了承を取ってから。
 
 ## サブプロジェクト
 
@@ -101,7 +101,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | 計画済み |
+| [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | 実装済み（確認待ち: デプロイと smoke） |
 | 2 | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 未作成 |
 | 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
