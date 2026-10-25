@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス5 の plan 2（Agent: Agent #2〜#5・#7）を `superpowers:writing-plans` で書く。writing-plans の前に、範囲の issue の本文を読む。
+1. スライス5 の plan 3（Android: 質問と録音。方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68）を `superpowers:writing-plans` で書く。writing-plans の前に、範囲の issue の本文を読む。
 
 ## サブプロジェクト
 
@@ -102,7 +102,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
-| 2 | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 未作成 |
+| [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（最終レビューの直しまでデプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
 | 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
@@ -153,6 +153,7 @@
 - Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。`RideSync` の引数は plan 3 で `store, api, online, saved, log` の順になった。
 - Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
 - Backend（スライス5 plan 1）: 記録に残す方位を決めるのは `lib/geo.py` の `settled_heading` だけ（Android の `headingDegrees` を先に、無ければ古い形の `headingSample` から。0.1度に丸め、360は0）。`headingSample` の受け口は、Android の新しい版を入れて未送信が残っていないことを確かめてから外す（Backend #28）。SSM の設定値の名前（`AgentRuntimeArn`・`ConversationResetParameter`）は、テンプレートに既定値を持たせず `samconfig.toml` で渡す。
+- Agent（スライス5 plan 2）: Web 検索の MCP の接続は `tools/web_search.WebSearchConnection` がプロセスの中で持ち続ける（Strands は質問ごとのエージェントが捨てられると接続を止めるため）。つなぎ直しの判断は Strands の内部の名前（`_connection_failed`・`_tool_provider_started`・`_is_session_active`）を読むので、Strands の版を上げたら `tests/test_web_search.py` の本物の `MCPClient` のテストで確かめる。`AGENT_MCP_MAX_IDLE_SECONDS=0` にすると、質問ごとにつなぎ直す前の振る舞いに戻せる。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
