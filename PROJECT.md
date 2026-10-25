@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス5 の plan 2（Agent: Agent #2〜#5・#7）を `superpowers:writing-plans` で書く。writing-plans の前に、範囲の issue の本文を読む。
+1. スライス5 の [plan 2](docs/plans/2026-10-25-slice5-plan2-agent.md)（Agent）を実行する。デプロイは Task 6 で利用者の了承を取ってから。
 
 ## サブプロジェクト
 
@@ -102,7 +102,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
-| 2 | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 未作成 |
+| [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 計画済み |
 | 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
