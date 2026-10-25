@@ -16,3 +16,5 @@
 | [0009](0009-keep-deletion-marks-in-the-cloud.md) | 削除はクラウドにも跡を残し、跡のある記録への置き直しを断る | 採用 |
 | [0010](0010-read-the-cloud-only-when-taking-over.md) | クラウドの記録は引き継ぎのときだけ読み、新しいほうを勝たせて突き合わせる | 採用 |
 | [0011](0011-api-spec-and-basic-design-in-parent-docs.md) | API 仕様の正本を親の docs に移し、基本設計を docs に置く | 採用 |
+| [0012](0012-narrow-the-requirements.md) | 要件を使い方に合わせて絞り、当面作らないものを要件から消す | 採用 |
+| [0013](0013-heading-on-android-held-while-stopped.md) | 進行方位は Android が走行のルートから求め、止まっているあいだは止まる直前の向きを保つ | 採用 |

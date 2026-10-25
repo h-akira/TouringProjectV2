@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. 次のスライス（候補の「準備と入力の補い」）の範囲を `superpowers:brainstorming` で決める。範囲を決めるときに後回しの指摘（Android #72〜#77 など）を見る。
+1. スライス5 の plan 2（Agent: Agent #2〜#5・#7）を `superpowers:writing-plans` で書く。writing-plans の前に、範囲の issue の本文を読む。
 
 ## サブプロジェクト
 
@@ -92,14 +92,30 @@
 
 候補の「同期の仕上げ」と「準備と入力の補い」は分け、同期の仕上げを先にした（2026-10-22、利用者と決めた）。US-C-09 が Must で、スライス3の送信と削除の跡の決まりが新しいうちに仕上げられ、準備と入力の補いの SC-01 の引き継ぎの入口が、ここで作る読み込みを呼べるため。plan の順番の理由は spec §11。
 
-### 6. 以降の候補（スライス4の終わりに見直す）
+### 6. スライス5: 入力と方位の補い・要件の整理・後回しの指摘の片付け（実行中）
 
-**順番（2026-10-22、利用者と決めた）**: アプリを仕上げる候補を先にし、CICD による自動デプロイは後回しにする。
+- **目的**: CICD と、当面やらないと決めたもの（[adr/0012](adr/0012-narrow-the-requirements.md)）を除いて、残っている要件と後回しの指摘をすべて片付け、文書を実装に合わせる。
+- **範囲の要点**: 止まっているときも進行方位を出す（Android が走行のルートから求める。[adr/0013](adr/0013-heading-on-android-held-while-stopped.md)）・SC-22 位置と方位の確認・文字での質問・SC-11（上限と合図）・SC-05 のユーザー名・後回しの指摘37件（Backend #5・Agent #6 は閉じる）・05〜08c と README の突き合わせ・PROJECT.md の整理（詳しくは [spec](docs/specs/2026-10-25-slice5-design.md) §2）
+- **完了の判定**: spec §1（長めの信号待ちでも左右が正しい・SC-22 で止まっていても方位が出る・文字で質問できる・SC-11 が効く・SC-05 のユーザー名・指摘が閉じている・文書が実装と合う）。
+- **計画**:
+
+| plan | 中身 | 状態 |
+|---|---|---|
+| [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
+| 2 | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 未作成 |
+| 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
+| 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
+| 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
+| 6 | 仕上げ: 05〜08c と README の突き合わせ・PROJECT.md の整理・spec §1 の判定 | 未作成 |
+
+候補の「準備と入力の補い」の SC-01・やめた質問の記録・文ごとの読み上げは、使い方に合わせて要件から消した（adr/0012。2026-10-25、利用者と決めた）。そのうえで、CICD 以外の残りを1つのスライスで終える。plan の順番の理由は spec §13。
+
+### 7. 以降の候補
 
 | 候補 | 出どころ |
 |---|---|
-| 準備と入力の補い（SC-01 と引き継ぎの入口・SC-11・文字での質問・文ごとの読み上げ・やめた質問の記録） | spec 2 §2・spec 4 §2 |
-| CICD による自動デプロイ（後回し。アプリを仕上げてから） | spec 2 §2 |
+| CICD による自動デプロイ（アプリを仕上げてから） | spec 2 §2 |
+| 当面やらないと決めたもの（要望が出たら、新しい ADR で戻す） | adr/0012 |
 | 後回しの指摘（関わるスライスで直す） | 各ユニットの GitHub issue |
 
 ## 持ち越し
@@ -135,7 +151,8 @@
 - Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
 - Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
 - Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。`RideSync` の引数は plan 3 で `store, api, online, saved, log` の順になった。
-- Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。SC-01 の引き継ぎの入口は `peek` と `switchTo` を呼べばよい。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
+- Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
+- Backend（スライス5 plan 1）: 記録に残す方位を決めるのは `lib/geo.py` の `settled_heading` だけ（Android の `headingDegrees` を先に、無ければ古い形の `headingSample` から。0.1度に丸め、360は0）。`headingSample` の受け口は、Android の新しい版を入れて未送信が残っていないことを確かめてから外す（Backend #28）。SSM の設定値の名前（`AgentRuntimeArn`・`ConversationResetParameter`）は、テンプレートに既定値を持たせず `samconfig.toml` で渡す。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
