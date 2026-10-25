@@ -102,7 +102,7 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
-| [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（デプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40） |
+| [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 実装済み（確認待ち: 最終レビューの直しのデプロイと smoke。直す前の版はデプロイ済みで、Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
 | 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
