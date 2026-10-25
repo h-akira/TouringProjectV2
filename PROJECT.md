@@ -101,7 +101,7 @@
 
 | plan | 中身 | 状態 |
 |---|---|---|
-| [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40） |
+| [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
 | 2 | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | 未作成 |
 | 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
@@ -152,6 +152,7 @@
 - Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
 - Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。`RideSync` の引数は plan 3 で `store, api, online, saved, log` の順になった。
 - Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
+- Backend（スライス5 plan 1）: 記録に残す方位を決めるのは `lib/geo.py` の `settled_heading` だけ（Android の `headingDegrees` を先に、無ければ古い形の `headingSample` から。0.1度に丸め、360は0）。`headingSample` の受け口は、Android の新しい版を入れて未送信が残っていないことを確かめてから外す（Backend #28）。SSM の設定値の名前（`AgentRuntimeArn`・`ConversationResetParameter`）は、テンプレートに既定値を持たせず `samconfig.toml` で渡す。
 - Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
 
 ## 前提（ほかの文書に無いもの）
