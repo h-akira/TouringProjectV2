@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. スライス5 の plan 3（Android: 質問と録音。方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68）を `superpowers:writing-plans` で書く。writing-plans の前に、範囲の issue の本文を読む。
+1. スライス5 の plan 3（[docs/plans/2026-10-26-slice5-plan3-android-asks.md](docs/plans/2026-10-26-slice5-plan3-android-asks.md)）を実行する。実行のしかた（Subagent-driven か Native。plan 1・2 は Native の `superpowers:executing-plans`）を利用者に選んでもらう。終わりに最終レビュー・後回しの指摘の書き出し・`superpowers:finishing-a-development-branch`。
 
 ## サブプロジェクト
 
@@ -103,7 +103,7 @@
 |---|---|---|
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
 | [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（最終レビューの直しまでデプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
-| 3 | Android: 質問と録音（方位の計算・文字での質問・SC-11・Room 版7・#30・#48・#7〜#11・#68） | 未作成 |
+| [3](docs/plans/2026-10-26-slice5-plan3-android-asks.md) | Android: 質問と録音（方位の計算・文字での質問・SC-11・#30・#48・#7〜#11・#68）。版 0.11.0 | 計画済み |
 | 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
 | 6 | 仕上げ: 05〜08c と README の突き合わせ・PROJECT.md の整理・spec §1 の判定 | 未作成 |
@@ -129,7 +129,8 @@
 - 端末（Pixel 8a）には2つのユーザー（メインと「サブ」）がある。署名の違うアプリを入れ直すときは、両方から外す（`adb uninstall --user 10 ...`）。スライス1のスパイクのアプリ `com.touringproject.v2spike` が両方に残っている（移行 plan 1）。
 
 - 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
-- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面は直前の値を使う（`ui/Labels.kt` の `nextVolume`。音量を扱う機能を足すときに効く）。
+- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面と次の質問は直前の値を使う（スライス5 plan 3 から `audio/MediaVolumeWatch.kt`。音量を扱う機能を足すときに効く）。
+- スライス5 spec §5.4 の「Room 版7で質問に `inputType` を足す」は行わない。`asks.input`（`voice`・`text`）がすでにあり、引き継ぎの読み込みも SC-07 もそれを使っている。方位も既存の `headingDegrees` 列に端末の値を入れる。Room は版6のまま（利用者と決めた、2026-10-26。スライス5 plan 3）。
 - Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。TouringProjectV2_Android のコミット 5a59440。押下が無視されて困るなら、片付けを待って始める作りにする）。
 - Android: 走行の `updatedAt` は、状態・名前・区間が変わったときだけ進む。点の追加と生きていた時刻の書き込み（`addPoint`・`markAlive`）では進まない（距離は送らない前提。plan 3 の送信で距離を送るなら、別の印を足す。Android のコミット 46eea83）。
 - Android: サービスは `onStartCommand` で `rides.load()` を待ってから `startForeground` を呼ぶ。plan 3 でマイグレーションを足すとき、`load()` が遅くなると前面サービスの開始の時間切れ（約10秒）にかかるので、重い処理を入れない（スライス2 plan 1 の最終レビュー。adr/0006）。
