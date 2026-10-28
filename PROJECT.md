@@ -14,8 +14,8 @@
 
 ## 次にやること
 
-1. スライス5 に plan 7（後回しの指摘の片付け）を足す（利用者と決めた、2026-10-28）。`superpowers:brainstorming` で範囲と分け方を決め、spec に書き足す。対象は、スライス5の途中の最終レビューで立てた後回しの指摘（Android #79〜#81・#83〜#86・#88〜#91・#93、Backend #29〜#31・#33、Agent #9〜#11）。Backend #28（古い版の未送信が残っていないことを確かめてから外す）と Agent #8（費用の検討。spec §2 で後に回した）は除く。Backend と Agent はデプロイと smoke まで。Android の直しを入れた版で、下の 2 の走行の判定をまとめて行えるようにする。
-2. 次に走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする（0.13.0 で）。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
+1. plan 7a（Backend と Agent。spec §15）を `superpowers:writing-plans` で書いて実行する。そのあと plan 7b（Android、0.14.0）を書いて実行する。
+2. 0.14.0 を入れて走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
 
@@ -49,7 +49,7 @@
 ### 6. スライス5: 入力と方位の補い・要件の整理・後回しの指摘の片付け（実行中）
 
 - **目的**: CICD と、当面やらないと決めたもの（[adr/0012](adr/0012-narrow-the-requirements.md)）を除いて、残っている要件と後回しの指摘をすべて片付け、文書を実装に合わせる。
-- **範囲の要点**: 止まっているときも進行方位を出す（Android が走行のルートから求める。[adr/0013](adr/0013-heading-on-android-held-while-stopped.md)）・SC-22 位置と方位の確認・文字での質問・SC-11（上限と合図）・SC-05 のユーザー名・後回しの指摘37件（Backend #5・Agent #6 は閉じる）・05〜08c と README の突き合わせ・PROJECT.md の整理（詳しくは [spec](docs/specs/2026-10-25-slice5-design.md) §2）
+- **範囲の要点**: 止まっているときも進行方位を出す（Android が走行のルートから求める。[adr/0013](adr/0013-heading-on-android-held-while-stopped.md)）・SC-22 位置と方位の確認・文字での質問・SC-11（上限と合図）・SC-05 のユーザー名・後回しの指摘37件（Backend #5・Agent #6 は閉じる）と途中で立てた指摘（spec §15。Backend #28・Agent #8 を除く）・05〜08c と README の突き合わせ・PROJECT.md の整理（詳しくは [spec](docs/specs/2026-10-25-slice5-design.md) §2）
 - **完了の判定**: spec §1（長めの信号待ちでも左右が正しい・SC-22 で止まっていても方位が出る・文字で質問できる・SC-11 が効く・SC-05 のユーザー名・指摘が閉じている・文書が実装と合う）。
 - **計画**:
 
@@ -61,7 +61,8 @@
 | [4](docs/plans/2026-10-28-slice5-plan4-android-screens.md) | Android: 画面と記録（SC-22・SC-05 のユーザー名・位置の新しさを起動からの経過時間で比べる #17・#24・#50・#61・#59・#69）。版 0.12.0 | 実装済み（確認待ち: 走行での SC-22 と #61。2026-10-28 の実機で SC-22・SC-05 の画面は ✓。マージ済み。後回しは Android #83〜#86） |
 | [5](docs/plans/2026-10-28-slice5-plan5-android-user-and-reread.md) | Android: ユーザー名と読み直し（#72〜#77。名前を先に保存して入れられなければ戻す・止まった理由・数える前の表示・件数）。版 0.13.0 | ✅ 完了（2026-10-28 の実機の確認 ✓。マージ済み。JVM 699件・エミュレーター6件。最終レビューで、書き直し待ちの SC-18 の行き止まりを直した（開いたときに書き直す・専用の文言）。後回しは Android #88〜#91） |
 | [6](docs/plans/2026-10-28-slice5-plan6-finish.md) | 仕上げ: 05〜08c と README の突き合わせ（食い違い8か所・Android #13）・PROJECT.md の整理（持ち越しの作りの決まりを各ユニットの README へ）・走行での spec §1 の判定 | 実装済み（確認待ち: Task 8 の走行での spec §1 の判定。Task 0〜7 は最終レビューの直しまで済み、マージ済み。後回しは Android #93・Backend #33） |
-| 7 | 後回しの指摘の片付け（スライス5で立てたもの。Backend #28・Agent #8 を除く） | 未作成 |
+| 7a | Backend と Agent: スライス5の途中で立てた指摘（spec §15。Backend #29〜#31・#33、Agent #9・#10。Agent #11 は閉じた）。デプロイと smoke まで | 未作成 |
+| 7b | Android: スライス5の途中で立てた指摘（spec §15。#79〜#81・#83〜#86・#88〜#91・#93）。版 0.14.0。この版で plan 6 の Task 8 の走行 | 未作成 |
 
 候補の「準備と入力の補い」の SC-01・やめた質問の記録・文ごとの読み上げは、使い方に合わせて要件から消した（adr/0012。2026-10-25、利用者と決めた）。そのうえで、CICD 以外の残りを1つのスライスで終える。plan の順番の理由は spec §13。
 
