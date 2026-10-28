@@ -14,9 +14,11 @@
 
 ## 次にやること
 
-1. スライス5 の plan 3 の枝（Android・親の `slice5-plan3`）を `superpowers:finishing-a-development-branch` で仕上げる（push・マージは利用者が明示したとき）。
-2. 次に走るときに、plan 3 の残りの確認をする: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
-3. plan 4（Android: SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69）を `superpowers:writing-plans` で書く。
+1. plan 4 の PR（Android #87・親 #26）を、利用者の指示でマージする。マージしたら、親の `Android` をマージ後の `main` に進める。
+2. 次に走るときに、plan 3 と plan 4 の残りの確認をする（0.12.0 は Pixel 8a に入れてある）。✗ が出たら `superpowers:systematic-debugging`。
+   - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
+   - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
+3. スライス5 の plan 5（Android: ユーザー名と読み直し #72〜#77）を `superpowers:writing-plans` で書く。範囲に入れる issue の本文を読み、plan のヘッダに番号を書く。
 
 ## サブプロジェクト
 
@@ -106,7 +108,7 @@
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
 | [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（最終レビューの直しまでデプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
 | [3](docs/plans/2026-10-26-slice5-plan3-android-asks.md) | Android: 質問と録音（方位の計算・文字での質問・SC-11・#30・#48・#7〜#11・#68）。版 0.11.0 | 実装済み（確認待ち: 走行での方位。2026-10-28 の実機で SC-11・文字の質問（DynamoDB に `inputType = text` で届いた）・機内モード・音量の帯は ✓。後回しは Android #79〜#81） |
-| 4 | Android: 画面と記録（SC-22・SC-05 のユーザー名・#50・#61・#17・#24・#59・#69） | 未作成 |
+| [4](docs/plans/2026-10-28-slice5-plan4-android-screens.md) | Android: 画面と記録（SC-22・SC-05 のユーザー名・位置の新しさを起動からの経過時間で比べる #17・#24・#50・#61・#59・#69）。版 0.12.0 | 実装済み（確認待ち: 走行での SC-22 と #61。2026-10-28 の実機で SC-22・SC-05 の画面は ✓。後回しは Android #83〜#86） |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
 | 6 | 仕上げ: 05〜08c と README の突き合わせ・PROJECT.md の整理・spec §1 の判定 | 未作成 |
 
@@ -133,7 +135,8 @@
 - 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
 - インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面と次の質問は直前の値を使う（スライス5 plan 3 から `audio/MediaVolumeWatch.kt`。音量を扱う機能を足すときに効く）。
 - スライス5 spec §5.4 の「Room 版7で質問に `inputType` を足す」は行わない。`asks.input`（`voice`・`text`）がすでにあり、引き継ぎの読み込みも SC-07 もそれを使っている。方位も既存の `headingDegrees` 列に端末の値を入れる。Room は版6のまま（利用者と決めた、2026-10-26。スライス5 plan 3）。
-- Android（スライス5 plan 3。plan 4 の SC-22 に効く）: 方位は `location/Heading.kt` の `findHeading` が決め、結果の `HeadingResult`（方位なしの理由つき）をそのまま画面に使える。走行中の材料は `ride/RouteHeading.kt`（Room の `segmentTail`）。パラメーターは `Settings` の `heading*` に既定値つきで入っている（画面はまだ無い）。記録していないときの点の集め方は SC-22 で作る。保つ上限と30秒の新しさは端末の時計と GPS の時刻で比べている（#17・#24 で起動からの経過時間にそろえる）。文字の質問のシートの状態は `AppGraph.textSheet`（Activity の作り直しをまたぐため）。
+- Android（スライス5 plan 3・4）: 方位は `location/Heading.kt` の `findHeading` が決め、結果の `HeadingResult`（方位なしの理由つき）をそのまま画面に使える。走行中の材料は `ride/RouteHeading.kt`（Room の `segmentTail`）。パラメーターは `Settings` の `heading*` に既定値つきで入っている。文字の質問のシートの状態は `AppGraph.textSheet`（Activity の作り直しをまたぐため）。
+- Android（スライス5 plan 4）: 位置の時刻（`Fix.timestamp`）は端末の時計とずれうるので、端末の時計と比べない。新しさは `Fix.isFresh`、区間より前かは `Fix.isSince`（どちらも起動からの経過時間 `elapsedMs`）、Room の点の古さは `GpsClock.now()`（位置の時刻で数えた今）と比べる。位置を受ける新しい窓口を足すときは `seenBy(gpsClock)` を通す。GNSS と網の位置で位置の時刻の基準が揃っているかは実機でしか分からない（最終レビューで未判定）。
 - Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。TouringProjectV2_Android のコミット 5a59440。押下が無視されて困るなら、片付けを待って始める作りにする）。
 - Android: 走行の `updatedAt` は、状態・名前・区間が変わったときだけ進む。点の追加と生きていた時刻の書き込み（`addPoint`・`markAlive`）では進まない（距離は送らない前提。plan 3 の送信で距離を送るなら、別の印を足す。Android のコミット 46eea83）。
 - Android: サービスは `onStartCommand` で `rides.load()` を待ってから `startForeground` を呼ぶ。plan 3 でマイグレーションを足すとき、`load()` が遅くなると前面サービスの開始の時間切れ（約10秒）にかかるので、重い処理を入れない（スライス2 plan 1 の最終レビュー。adr/0006）。
