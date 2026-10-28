@@ -14,8 +14,10 @@
 
 ## 次にやること
 
-1. plan 4 の実機の確認（plan の Task 14 の1〜6。SC-22 は歩いて確かめる）。版 0.12.0 の走行用のビルドを Pixel 8a に入れる。Android の `slice5-plan4`（`fe9db92`）と親の `slice5-plan4` は、最終レビュー（Critical・Important なし）と後回しの指摘の書き出しまで済み、push・マージ待ち（`superpowers:finishing-a-development-branch` の続き。push の前に `pre-push-secret-scan`）。✗ が出たら `superpowers:systematic-debugging`。
-2. 次に走るときに、plan 3 の残りの確認をする: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。0.12.0 を入れていれば、走行中と一時停止中の SC-22（plan 4 の Task 14 の4）も同じ走行で確かめる。
+1. plan 4 の PR（Android #87・親 #26）を、利用者の指示でマージする。マージしたら、親の `Android` をマージ後の `main` に進める。
+2. 次に走るときに、plan 3 と plan 4 の残りの確認をする（0.12.0 は Pixel 8a に入れてある）。✗ が出たら `superpowers:systematic-debugging`。
+   - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
+   - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
 3. スライス5 の plan 5（Android: ユーザー名と読み直し #72〜#77）を `superpowers:writing-plans` で書く。範囲に入れる issue の本文を読み、plan のヘッダに番号を書く。
 
 ## サブプロジェクト
@@ -106,7 +108,7 @@
 | [1](docs/plans/2026-10-25-slice5-plan1-backend.md) | Backend: `headingDegrees`（spec §4.4）・Backend #6〜#8・#12〜#14・#21〜#25・smoke・07。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 40/40。後回しは Backend #29〜#31） |
 | [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（最終レビューの直しまでデプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
 | [3](docs/plans/2026-10-26-slice5-plan3-android-asks.md) | Android: 質問と録音（方位の計算・文字での質問・SC-11・#30・#48・#7〜#11・#68）。版 0.11.0 | 実装済み（確認待ち: 走行での方位。2026-10-28 の実機で SC-11・文字の質問（DynamoDB に `inputType = text` で届いた）・機内モード・音量の帯は ✓。後回しは Android #79〜#81） |
-| [4](docs/plans/2026-10-28-slice5-plan4-android-screens.md) | Android: 画面と記録（SC-22・SC-05 のユーザー名・位置の新しさを起動からの経過時間で比べる #17・#24・#50・#61・#59・#69）。版 0.12.0 | 実装済み（確認待ち: 実機の確認（plan の Task 14）。JVM 687件・エミュレーター6件。後回しは Android #83〜#86） |
+| [4](docs/plans/2026-10-28-slice5-plan4-android-screens.md) | Android: 画面と記録（SC-22・SC-05 のユーザー名・位置の新しさを起動からの経過時間で比べる #17・#24・#50・#61・#59・#69）。版 0.12.0 | 実装済み（確認待ち: 走行での SC-22 と #61。2026-10-28 の実機で SC-22・SC-05 の画面は ✓。後回しは Android #83〜#86） |
 | 5 | Android: ユーザー名と読み直し（#72〜#77） | 未作成 |
 | 6 | 仕上げ: 05〜08c と README の突き合わせ・PROJECT.md の整理・spec §1 の判定 | 未作成 |
 
