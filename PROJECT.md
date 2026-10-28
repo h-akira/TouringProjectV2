@@ -28,72 +28,23 @@
 
 ### 1. スライス1: 土台と、質問の一巡（✅ 完了。2026-10-21 の走行で spec §1 を確かめた）
 
-- **目的**: インカムのボタンで質問してから、回答の読み上げを聞き、ナビへ戻るまでを全ユニットに通す。
-- **範囲の要点**: 質問の一巡、現在地・住所・進行方位の確定、Web 検索と周辺検索での回答、15分の会話の文脈、回答の音量、録音の確認、最小限の画面、クラウドへの記録と段ごとの時間・トークン数の計測（詳しくは [spec](docs/specs/2026-10-16-slice1-design.md) §2）
-- **完了の判定**: spec §1 の成功の判定（走りながらの通し・「右手の〜」が正しい・周辺の施設を向きと距離で答える・失敗が音で分かる・時間とトークン数を集計できる・15分の文脈）。
-- **計画**:
-
-| plan | 中身 | 状態 |
-|---|---|---|
-| [1](docs/plans/2026-10-16-slice1-plan1-foundation-and-spikes.md) | 土台と、スパイク（ストリーミングの文字起こし・背面での動作） | ✅ 完了 |
-| [2](docs/plans/2026-10-16-slice1-plan2-agent.md) | Agent | ✅ 完了 |
-| [3](docs/plans/2026-10-16-slice1-plan3-backend.md) | Backend | ✅ 完了 |
-| [4a](docs/plans/2026-10-16-slice1-plan4a-app-handsfree.md) | App のハンズフリーの一巡 | ✅ 完了 |
-| [4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md) | App の残り（録音の確認 SC-12・回答の音量 SC-21・音量の警告・走行用のビルド・App の issue #1〜#8） | ✅ 完了（実機の確認まで。マージ済み） |
-| — | 完了の判定（実際の走行） | ✅ 完了（2026-10-21、ネイティブ版 0.5.0。利用者が走りながらの通し・右手と左手・周辺の施設・失敗の音・15分の文脈を確かめた。質問11件の段ごとの時間は、受け付けから音声まで中央値12.6秒・最大18.6秒で、入力のトークンは1問あたり中央値3909・最大10590） |
+[spec](docs/specs/2026-10-16-slice1-design.md)・plan [1](docs/plans/2026-10-16-slice1-plan1-foundation-and-spikes.md)・[2](docs/plans/2026-10-16-slice1-plan2-agent.md)・[3](docs/plans/2026-10-16-slice1-plan3-backend.md)・[4a](docs/plans/2026-10-16-slice1-plan4a-app-handsfree.md)・[4b](docs/plans/2026-10-16-slice1-plan4b-app-finish.md)。走行での判定で、受け付けから音声まで中央値12.6秒・最大18.6秒、入力のトークンは1問あたり中央値3909・最大10590だった。
 
 ### 2. ネイティブ移行: App を Kotlin で作り直す（✅ 完了）
 
-[spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。実機の確認は ✓（回答の音量の差だけ聞き取れず、既知の制約として通した。持ち越しを参照）。後回しは Android の issue #7〜#13。
+[spec](docs/specs/2026-10-17-native-migration-design.md)・plan [1](docs/plans/2026-10-17-native-migration-plan1-foundation-and-handsfree.md)・[2](docs/plans/2026-10-17-native-migration-plan2-finish.md)。App は `Android/`（`TouringProjectV2_Android`）に移り、React Native 版の `TouringProjectV2_App` はアーカイブ済み。
 
 ### 3. スライス2: 走行の記録と、地図での振り返り（✅ 完了。2026-10-21 の走行で spec §1 を確かめた。結果は adr/0006 の追記）
 
-- **目的**: 走行の始まりから終わりまでのルートと、その間の質問を記録し、走ったあとに地図で振り返るまでを全ユニットに通す。
-- **範囲の要点**: 開始・一時停止・再開・終了・自動終了、背面でのルートの記録（前面サービスの中で Fused）、端末の DB（Room）、走行とルートの送信（送るだけ。読み込みはスライス3）、タブ、記録一覧・走行の詳細・会話の詳細の地図（MapLibre と国土地理院のタイル）。質問は走行の記録中だけ受ける（adr/0008）。端末の停止で走行を終える。メモ・削除・地点メモは入れない（詳しくは [spec](docs/specs/2026-10-17-slice2-design.md) §2）
-- **完了の判定**: spec §1（ルートが地図に引かれる・一時停止と再開・自動終了・ピンから質問を読める・記録していないときに質問できないことが声で分かる・保存済み・電池の減りの計測）。
-- **計画**:
-
-| plan | 中身 | 状態 |
-|---|---|---|
-| [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md) | Android: 走行の記録の芯（Room・状態機械・サービス・位置・自動終了・落ちたときと端末の停止・SC-17・SC-04）。ADR 0006。終わりに短い走行で確かめる | ✅ 完了（実機で ✓。ログでの裏付けの2点は adr/0006 の「確かめていないこと」。後回しは Android の issue #15〜#20） |
-| [2](docs/plans/2026-10-18-slice2-plan2-backend.md) | Backend（`rideId`・`GET /asks` の追加項目・走行の `PUT`・Backend の issue #4 Agent のセッションをユーザーごとに分ける）。デプロイと smoke まで | ✅ 完了（デプロイ済み・smoke 17/17。後回しは Backend #12〜#14・Agent #7・Android #22） |
-| [3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md) | Android: 送信の待ち行列（プロセスの中で spec §5.3 の契機に送る）・質問の保存（Room 版2）と `rideId`・設定の版の表示（spec §7.9。実行中に利用者が足した）・issue #12・#16・#18・#22 | ✅ 完了（2026-10-21 の走行で、300点のかたまり・画面を消して長く走ったときの送信を確かめた。一時停止中の質問は plan 4b で受けなくなった。後回しは Android #23〜#30） |
-| [3b](docs/plans/2026-10-20-slice2-plan3b-tabs-and-ride-settings.md) | Android: タブ（記録のタブは仮の画面）・ホームの走行のカードと SC-04 の質問の数・SC-16 と最長時間を変えたときの締め切りの計算し直し・issue #15・#19・#20（3a の `asks` の表を読むので後に置く） | ✅ 完了（実機で ✓。マージ済み。後回しは Android #32〜#38） |
-| [4a](docs/plans/2026-10-20-slice2-plan4a-records-and-map.md) | Android: 地図の部品（MapLibre・国土地理院のタイル）と、走行から入る振り返り（SC-05 の走行の一覧と保存の状態・SC-06・SC-07 の走行の中での前後）・名前の変更・Room 版3（断られたかたまりを点ごとに持つ）・issue #27・#32〜#37。ADR 0007 | ✅ 完了（実機の14項目 ✓・名前の変更が DynamoDB に届くことも ✓。マージ済み。後回しは Android #41〜#46） |
-| [4b](docs/plans/2026-10-20-slice2-plan4b-ask-only-while-recording.md) | Android: 質問を走行の記録中だけ受ける（spec §4.7）・ホームの文言・走行に結びつかない質問を消す一度だけの手作業・Android #41・#42・#43・#45・#46。adr/0008（日ごとの振り返りはやめた）。端末の質問は Room の版4で消す | ✅ 完了（実機の確認 ✓。答えを待つあいだの一時停止は、ふつうの操作では起きないので確認から外した。マージ済み。後回しは Android #48〜#51） |
-
-使い捨てのスパイクは置かない（理由は spec §11）。plan 4 を 4a・4b に分けたのは、最も危うい地図を 4a で先に実機で確かめ、どちらの plan も実機で触れる形で終えるため（2026-10-20、利用者と決めた）。そのあと、4b の日ごとの振り返りは要件から外し、4b を質問の受け方の変更に置き換えた（adr/0008）。
+[spec](docs/specs/2026-10-17-slice2-design.md)・plan [1](docs/plans/2026-10-18-slice2-plan1-ride-recording-core.md)・[2](docs/plans/2026-10-18-slice2-plan2-backend.md)・[3a](docs/plans/2026-10-18-slice2-plan3a-sync-and-asks.md)・[3b](docs/plans/2026-10-20-slice2-plan3b-tabs-and-ride-settings.md)・[4a](docs/plans/2026-10-20-slice2-plan4a-records-and-map.md)・[4b](docs/plans/2026-10-20-slice2-plan4b-ask-only-while-recording.md)。
 
 ### 4. スライス3: メモ・地点メモ・削除（✅ 完了。2026-10-22 に spec §1 を確かめた）
 
-- **目的**: 走ったあとと停車中に記録へ書き足し、要らないものを消し、それをクラウドにも反映する。
-- **範囲の要点**: 会話・走行のメモ（SC-08）、地点メモ（SC-19。文字と声。声は UC-6 の文字起こしだけの依頼）、地図の質問と地点メモの表示の切り替え、会話・地点メモ・終えた走行の削除（DL-01）、メモ・地点メモ・削除の送信（送るだけ）とクラウドの削除の跡（[adr/0009](adr/0009-keep-deletion-marks-in-the-cloud.md)）、Android #23・#25・#26・#29・#49・#51（詳しくは [spec](docs/specs/2026-10-21-slice3-design.md) §2）
-- **完了の判定**: spec §1（地点メモを文字と声で書けて緑のピンで出る・通信できないときの文字の地点メモが後で送られる・メモを書けて消せる・消すと端末と DynamoDB から消えて跡が残る・消したものが古い送信で戻らない）。
-- **計画**:
-
-| plan | 中身 | 状態 |
-|---|---|---|
-| [1](docs/plans/2026-10-21-slice3-plan1-backend.md) | Backend: メモ・地点メモ・削除と跡・文字起こし・worker の条件・smoke・07 の UC-6・UC-7。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 30/30。マージ済み。後回しは Backend #16〜#19） |
-| [2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md) | Android: Room 版5・メモ・会話と走行の削除・送信の広げ方・#23・#25・#26・#29 | ✅ 完了（2026-10-22 の実機の確認 ✓。DynamoDB にメモ・会話と走行の削除の跡が届いた。マージ済み。後回しは Android #53〜#55） |
-| [3](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md) | Android: 文字の地点メモ（SC-19・ホームの入口・送信・ピンと切り替え・時系列・地点メモの削除）・#49・#51・#54・#55 | ✅ 完了（2026-10-22 の実機の確認 ✓。マージ済み。機内モードの手順は省いた。DynamoDB に地点メモと住所・地点メモの削除の跡が届いた。後回しは Android #57〜#59） |
-| [4](docs/plans/2026-10-22-slice3-plan4-voice-point-memos.md) | Android: 声の地点メモ（SC-19 でのインカムのボタン・通信できないとき）・#57。最後に spec §1 の判定 | ✅ 完了（2026-10-22 の実機の確認 ✓。マージ済み。spec §1 の5項目を確かめた: 文字と声の地点メモと緑のピン・機内モードで書いた地点メモが後で送られて住所が付いた（DynamoDB で確認）・メモ・削除と跡・smoke 30/30 で消した記録への古い `PUT` が 410。後回しは Android #61・#62） |
-
-スライス2の候補「同期の仕上げと書き足し」を2つに分け、書き足しと削除を先にした（2026-10-21、利用者と決めた）。メモと地点メモで記録の形が増えるので、それを先に固めれば、同期の仕上げで読み込む・引き継ぐものが一度で決まる。端末をまたぐ突き合わせは端末が2台になって初めて効くので、同期の仕上げで決める。plan の順番の理由は spec §11。
+[spec](docs/specs/2026-10-21-slice3-design.md)・plan [1](docs/plans/2026-10-21-slice3-plan1-backend.md)・[2](docs/plans/2026-10-21-slice3-plan2-memos-and-deletion.md)・[3](docs/plans/2026-10-22-slice3-plan3-text-point-memos.md)・[4](docs/plans/2026-10-22-slice3-plan4-voice-point-memos.md)。
 
 ### 5. スライス4: 同期の仕上げ（✅ 完了。2026-10-23 の実機で spec §1 を確かめた）
 
-- **目的**: 通信が無いときでも記録が欠けずにクラウドへ届き、端末を替えても入れ直しても記録が戻る。
-- **範囲の要点**: 質問できなかった地点（US-C-09。届かなかった質問だけ）、通信が戻ったら送る（プロセスの中。WorkManager は使わない）、引き継ぎの読み込み（ユーザー名を変えるときと SC-14 の手動だけ。`GET /records`）と突き合わせの決まり（[adr/0010](adr/0010-read-the-cloud-only-when-taking-over.md)）、SC-14、Android #28・#53・#58・#62、Backend #2・#3・#16・#17・#18・#19（詳しくは [spec](docs/specs/2026-10-22-slice4-design.md) §2）
-- **完了の判定**: spec §1（質問できなかった地点が出てメモを書ける・前面に出さなくても通信が戻れば送られる・SC-14・入れ直して同じユーザー名で記録が戻る・ユーザー名の切り替え）。
-- **計画**:
-
-| plan | 中身 | 状態 |
-|---|---|---|
-| [1](docs/plans/2026-10-22-slice4-plan1-backend.md) | Backend: `PUT /asks/{askId}/offline`・`GET /records`・Backend #2・#3・#16〜#19・smoke・07。デプロイと smoke まで | ✅ 完了（最終レビューの直しまでデプロイ済み・smoke 39/39。マージ済み。後回しは Backend #21〜#25） |
-| [2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md) | Android: 質問できなかった地点（Room 版6）・通信が戻ったら送る・#28・#53・#58・#62 | ✅ 完了（2026-10-22 の実機の確認 ✓。版 0.9.0。機内モードの質問2件が質問できなかった地点として残り、画面を消したまま機内モードを外すと、前面に出さずに走行と地点（住所つき）が DynamoDB に届いた。後回しは Android #64〜#69） |
-| [3](docs/plans/2026-10-23-slice4-plan3-takeover.md) | Android: 引き継ぎの読み込み（SC-18・DL-03・突き合わせ）・SC-14・#64〜#67。最後に spec §1 の判定 | ✅ 完了（2026-10-23 の実機の確認 ✓。版 0.10.0。SC-14・読み直し・名前の切り替えと戻し・入れ直して同じ名前で記録が戻ることを確かめ、読み込みの前後で DynamoDB の件数が変わらない（送り返さない）ことも見た。後回しは Android #72〜#77） |
-
-候補の「同期の仕上げ」と「準備と入力の補い」は分け、同期の仕上げを先にした（2026-10-22、利用者と決めた）。US-C-09 が Must で、スライス3の送信と削除の跡の決まりが新しいうちに仕上げられ、準備と入力の補いの SC-01 の引き継ぎの入口が、ここで作る読み込みを呼べるため。plan の順番の理由は spec §11。
+[spec](docs/specs/2026-10-22-slice4-design.md)・plan [1](docs/plans/2026-10-22-slice4-plan1-backend.md)・[2](docs/plans/2026-10-22-slice4-plan2-unreached-asks.md)・[3](docs/plans/2026-10-23-slice4-plan3-takeover.md)。
 
 ### 6. スライス5: 入力と方位の補い・要件の整理・後回しの指摘の片付け（実行中）
 
@@ -123,49 +74,19 @@
 
 ## 持ち越し
 
-前の plan の Ruling と、実装で分かったことのうち、後の plan・サブプロジェクトに効くもの。spec に入れたら消す。
+後の plan・サブプロジェクトに効くことのうち、コードと各ユニットの README に無いもの。コードの作りの決まりは各ユニットの README の「大事な決まり」・「テスト」に置く。
 
-- Android: Robolectric は SDK 35 で動かす（SDK 36 は Java 21 が要る。`robolectric.properties`）。`withContext(Dispatchers.Main)` に切り替えるコードを Robolectric のテストから直に呼ぶと、メインスレッドの待ち合いで止まる（別スレッドから呼んでメインのルーパーを回す。`AudioTest` の例）。テストの実行には5分の上限がある（移行 plan 1）。
-- Android: `MainActivity` は `singleTask` で、`ActivityScenario` は追えない。エミュレーターのテストは Activity を直接起動する（移行 plan 1）。
-- Android: minSdk 29 のまま、Android 12 より前は画面から始めた質問を本体のマイクで録る（通信の機器の API が 12 以降のため。インカムのボタンの経路は試す）。minSdk を上げるなら spec を直す（TouringProjectV2_Android の PR #6）。
-- Android: 押下は、Activity の復元（プロセスが死んだ後）と「最近使ったアプリ」からの再表示では数えない（TouringProjectV2_Android の PR #6）。
-- 端末（Pixel 8a）には2つのユーザー（メインと「サブ」）がある。署名の違うアプリを入れ直すときは、両方から外す（`adb uninstall --user 10 ...`）。スライス1のスパイクのアプリ `com.touringproject.v2spike` が両方に残っている（移行 plan 1）。
-
-- 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちになり、増幅とリミッターで上げてもインカムで差が聞き取れなかった（plan 4b。spec §6.3・§12 に記録済み）。ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（Backend には選んだ値が届いている。移行 plan 2 の実機の確認で、既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
-- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る。ネイティブ版の `AudioRoute.mediaVolume()` はそのあいだ `null` を返し、画面と次の質問は直前の値を使う（スライス5 plan 3 から `audio/MediaVolumeWatch.kt`。音量を扱う機能を足すときに効く）。
-- スライス5 spec §5.4 の「Room 版7で質問に `inputType` を足す」は行わない。`asks.input`（`voice`・`text`）がすでにあり、引き継ぎの読み込みも SC-07 もそれを使っている。方位も既存の `headingDegrees` 列に端末の値を入れる。Room は版6のまま（利用者と決めた、2026-10-26。スライス5 plan 3）。
-- Android（スライス5 plan 3・4）: 方位は `location/Heading.kt` の `findHeading` が決め、結果の `HeadingResult`（方位なしの理由つき）をそのまま画面に使える。走行中の材料は `ride/RouteHeading.kt`（Room の `segmentTail`）。パラメーターは `Settings` の `heading*` に既定値つきで入っている。文字の質問のシートの状態は `AppGraph.textSheet`（Activity の作り直しをまたぐため）。
-- Android（スライス5 plan 4）: 位置の時刻（`Fix.timestamp`）は端末の時計とずれうるので、端末の時計と比べない。新しさは `Fix.isFresh`、区間より前かは `Fix.isSince`（どちらも起動からの経過時間 `elapsedMs`）、Room の点の古さは `GpsClock.now()`（位置の時刻で数えた今）と比べる。位置を受ける新しい窓口を足すときは `seenBy(gpsClock)` を通す。GNSS と網の位置で位置の時刻の基準が揃っているかは実機でしか分からない（最終レビューで未判定）。
-- Android: SC-12 を離れた試し録りが片付くまで（経路の準備で最大3秒）、インカムの押下と「押して話す」は何も始めない（片付けの経路の解放が質問の経路を壊すため。TouringProjectV2_Android のコミット 5a59440。押下が無視されて困るなら、片付けを待って始める作りにする）。
-- Android: 走行の `updatedAt` は、状態・名前・区間が変わったときだけ進む。点の追加と生きていた時刻の書き込み（`addPoint`・`markAlive`）では進まない（距離は送らない前提。plan 3 の送信で距離を送るなら、別の印を足す。Android のコミット 46eea83）。
-- Android: サービスは `onStartCommand` で `rides.load()` を待ってから `startForeground` を呼ぶ。plan 3 でマイグレーションを足すとき、`load()` が遅くなると前面サービスの開始の時間切れ（約10秒）にかかるので、重い処理を入れない（スライス2 plan 1 の最終レビュー。adr/0006）。
-- Android: エミュレーターのテストで Back を押す前に、`onBackPressedDispatcher.hasEnabledCallbacks()` が false になるのを待つ。対話の画面の `BackHandler` は、状態が `IDLE` になってから1回描き直すまで残る（Android のコミット b7d6cba）。
-- Android の plan の実行: 使い捨てのフォルダで確かめたコードを本物のリポジトリで回すと、Gradle のビルドキャッシュ（フォルダをまたいで共有される）からテストの結果が返り、1秒ほどで終わる。テストを確かめるときは `--rerun` を付ける。Room のスキーマの版を新しく足した直後の1回目は「Missing file N.json」で落ち、2回目で通る（テストの資産が先に集められるため）。executing-plans の `task-start`・`task-done` は親のリポジトリの git を読むので、Android のコミットの範囲は ledger に手で書く（スライス2 plan 3a）。
-- Android: 版（`versionName`・`versionCode`）は、新しい plan の走行用のビルドを実機に入れる前に手で上げる（plan 4a は 0.4.0）。plan の外の修正を入れるときは3つ目の数を上げる（0.3.0 → 0.3.1）。コミットの番号はアプリに出さない（利用者の決定。Android の README・spec 2 §7.9）。
-- Backend: デプロイの直後の数秒は、新しい経路が 403（`Missing Authentication Token`）になることがある。smoke で新しい経路だけが 403 なら、1分ほど待って回し直す（スライス2 plan 2 と、スライス3 plan 1 の地点メモの経路で起きた。1回目は通り、2回目・3回目が 403 になることもある）。
-- Backend: 削除の跡を見て書く書き込み（走行・ルート・地点メモ・会話のメモ）は、書き込みと跡の確かめを1つのトランザクションにしている（`store._write_unless_deleted`）。テーブルの resource の `meta.client` は値の型付けを自分で行うので、トランザクションには素の値を渡す（型付けした値を渡すと、取り消しの理由が `TypeError` になる）。走行の削除で子の記録を集める問い合わせは、一貫した読み出しにする（moto はいつも一貫しているので、テストでは引数を確かめる。スライス3 plan 1 の最終レビュー）。後回しは Backend #16〜#19。
-- Backend（スライス4 plan 1）: `GET /records` の項目は、値が無ければ `null` で返す（入れ子の区間の `endedAt`・点の `accuracy` も）。整数に等しい数は整数で返る（`5.0` が `5`）ので、Android は数を Double として読む。質問の `status` は `pending` と `processing` を見分けず `processing`（spec §6.1 の追記）。SQS に積めなかった質問は Backend に残さず 503 を返すので、Android は 503 を通信の失敗として質問できなかった地点を残す。
-- Android: Kotlin の差分コンパイルは、interface に足したメソッドを実装していない作り物のテストを見逃して通すことがある。plan の終わりの確かめは `./gradlew clean` から回す（スライス2 plan 4a）。
-- Android: Robolectric で `@Config(qualifiers = ...)` で画面を大きくすると、ポップアップ（メニュー・ダイアログ）のテストが止まらなくなる（メモリが尽きる）。画面の外の行は `performScrollToNode` で出す（スライス2 plan 4a）。
-- Android: MapLibre の `queryRenderedFeatures` は、地図が一度描き終える前に呼ぶとネイティブのコードが落ちる。`RouteMap` は、押した判定の受け口とテストへの `onMap` を、最初に描き終えて落ち着いたとき（`OnDidBecomeIdle`）に付ける。MapLibre は Robolectric では動かないので、画面は地図を枠（`MapSlot`）で受け、JVM のテストは作り物の地図を渡す（スライス2 plan 4a）。
-- Android: MapLibre の呼び出し（スタイル・ソース・カメラ）は UI スレッドだけで行う。`withContext(Dispatchers.Default)` から戻った先は、テストの仕組みの下では UI スレッドとは限らない。`RouteMap` は地図に触る処理を `withContext(Dispatchers.Main)` に置く（スライス2 plan 4b）。
-- Android のテストの決まり（`backgroundScope` は `advanceUntilIdle` で進まない・実機が繋がっているときは `ANDROID_SERIAL` でエミュレーターを指す）は Android の README。Robolectric の AudioTrack は書いた分を即座に再生済みにするので、再生を途中で止めることは実機で確かめる（`AudioTest` の `PcmPlayerTest`。移行 plan 2）。
-
-- Android（スライス3 plan 3）: ホームの「📝 地点メモ」は、進行方向のカードが無いので「インカムのボタンで話せます」の行の右に置いた（spec §7.1 はカードの右）。進行方向のカードを作るときに移す。SC-19 は SC-08 と共通の `MemoEditor` の上にある（plan 4 の声の入力は、ここに足す）。質問の一巡の終わりに走行の行が無ければ質問を書かない（`AskDao.keep`、Android #54）。
-- Android のテスト（スライス3 plan 3）: Robolectric では、入力欄にフォーカスがあるあいだの最初の Back を入力欄が受けるので、破棄の確認は ✕ で確かめる。閉じた Room への最初の素の問い合わせは取り消しの例外（`JobCancellationException`）になるので、読み出しの失敗は DAO を委譲で包んで作る（`RoomNotesTest`）。`RideForegroundServiceTest` の1件がまれに落ちる（Android #59）。
-- Android（スライス3 plan 4）: SC-19 の声の入力（`VoiceInput`）は、試し録りと同じく専用の経路の切り替えと録音の部品を持つが、その下の `AudioRoute` はアプリに1つ。SC-19 を離れたら待っている処理を取り消してすぐ経路を返し、それでも返しきるまで（音声認識の経路の準備は最大4秒、取り消せない）は `busy` で、押下の行き先が質問を始めない。SC-19 の `attach` は札を返し、`detach` はその札のときだけ効く（閉じていく画面の後始末が、新しく開いた画面からインカムのボタンを取り上げないように）。SC-12 の試し録りは `voice.busy` を見ていない（最終レビューで、起きにくいとして残した）。
-- Android: 送信で「断られた」と同じに扱うのは `SerializationException` だけ。`IllegalArgumentException` は含めない（OkHttp が不正な API の URL で投げるので、設定の誤りで全部が「断られた」になる。スライス3 plan 2）。
-- Android: 接続キーとユーザー名の変化での送信（`credentialChanges`）は、読み込みのあとに集める。読み込んだ時点の値は数えない（スライス3 plan 2 の最終レビュー）。
-- Android（スライス4 plan 2）: 質問できなかった地点は `asks` の行（`status = offline`・端末の UUID・`conversationId` は null・送信の印は地点メモと同じ `updatedAt`/`sentUpdatedAt`/`rejectedUpdatedAt`）。Room は版6。SC-12 への録音の保存は `POST /asks` の結果が分かってから（質問できなかった地点の録音は残さない）。`RideSync` の引数は `store, api, online, log` の順（`log` を末尾のラムダで渡すため）。通信が戻ったときの契機は `reconnections`（`AppGraph.init`）。`RideSync` の引数は plan 3 で `store, api, online, saved, log` の順になった。
-- Android（スライス4 plan 3）: クラウドの記録を読むのは `Takeover`（`peek`・`switchTo`・`reread`）だけ。読み込みは `RideSync.withoutPasses` の中で走り、名前の保存（`AppGraph.switchedTo`）もその中。名前の変更と読み直しは、走行の記録中・一時停止中は行わない（利用者の決定）。名前の変更は未送信（`SaveSummary.unsent`。断られた版と記録中の走行は数えない）があるあいだも行わない。今の記録（走行20本ほど）で読み込みは1〜2秒なので、進み具合の件数は出していない（spec §12）。記録が大きく増えたら測り直す。
-- Backend（スライス5 plan 1）: 記録に残す方位を決めるのは `lib/geo.py` の `settled_heading` だけ（Android の `headingDegrees` を先に、無ければ古い形の `headingSample` から。0.1度に丸め、360は0）。`headingSample` の受け口は、Android の新しい版を入れて未送信が残っていないことを確かめてから外す（Backend #28）。SSM の設定値の名前（`AgentRuntimeArn`・`ConversationResetParameter`）は、テンプレートに既定値を持たせず `samconfig.toml` で渡す。
-- Agent（スライス5 plan 2）: Web 検索の MCP の接続は `tools/web_search.WebSearchConnection` がプロセスの中で持ち続ける（Strands は質問ごとのエージェントが捨てられると接続を止めるため）。つなぎ直しの判断は Strands の内部の名前（`_connection_failed`・`_tool_provider_started`・`_is_session_active`）を読むので、Strands の版を上げたら `tests/test_web_search.py` の本物の `MCPClient` のテストで確かめる。`AGENT_MCP_MAX_IDLE_SECONDS=0` にすると、質問ごとにつなぎ直す前の振る舞いに戻せる。
-- Android: `AppUi` の中の記録の画面（SC-05〜SC-07）は本物の地図（MapLibre）を描くので、Robolectric でアプリ全体を通すテストは書けない。画面ごとのテストに作り物の地図を渡し、つなぎは実機で確かめる（スライス3 plan 2）。
+- 端末（Pixel 8a）には2つのユーザー（メインと「サブ」）がある。走行用のビルドは `adb install --user 0` でメインに入れる。署名の違うアプリを入れ直すときは、両方から外す（`adb uninstall --user 10 ...`）。スライス1のスパイクのアプリ `com.touringproject.v2spike` が両方に残っている。
+- 回答の音量は +6dB が上限。Polly の `prosody volume` は +6dB で頭打ちで、増幅とリミッターで上げてもインカムで差が聞き取れず、ネイティブ版でも +0・+3・+6 の差は聞き取れなかった（既知の制約として通した）。音量の要望が出たら、この経緯を前提に Backend で考える。
+- インカムの通話の経路（SCO）が張られているあいだと、切れた直後しばらくは、メディアの音量として通話の機器の値が返る（Android は `MediaVolumeWatch` で直前の値を使う）。音量を扱う機能を足すときに効く。
+- クラウドの読み込み（SC-18・SC-14）は、今の記録（走行20本ほど）で1〜2秒なので、進み具合の件数は出していない。記録が大きく増えたら測り直す。
+- 位置の時刻が、GNSS の位置と網の位置で同じ基準かは実機でしか分からない（Android の `GpsClock` は受けた位置から位置の時刻と経過時間の差を覚える。差が位置ごとに飛ぶなら、止まったあとの方位の保ち方がずれる）。
 
 ## 前提（ほかの文書に無いもの）
 
 - 後回しの指摘は、各ユニットのリポジトリ（Android・Backend・Agent・CICD）の GitHub issue。
 - plan のコードは、使い捨てのフォルダに展開して、テストとビルドが通ることを確かめてから plan に書く。
+- executing-plans の `task-start`・`task-done` は親のリポジトリの git を読むので、ユニットのコミットの範囲は ledger に手で書く。
 - ブランチは plan ごとに、関わるユニットと親に切る。マージはユニット → 親の順で、親は submodule の指す先をユニットのマージ後の main に進める。文書の写し（`scripts/sync-docs.sh`）は、関わらないユニット（Agent・CICD など）では main に直接コミットする。
 - push の前に `pre-push-secret-scan` をかけて報告する。
 - LLM の入力のトークンを増やす設計は避ける。調整できる値は SSM のパラメーターにする。
