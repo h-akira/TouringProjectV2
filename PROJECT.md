@@ -14,7 +14,7 @@
 
 ## 次にやること
 
-1. plan 5 の実機の確認（plan の Task 10 の1〜4）。版 0.13.0 の走行用のビルドを Pixel 8a に入れる。Android の `slice5-plan5` と親の `slice5-plan5` は、最終レビュー（Important 1件を直した）と後回しの指摘の書き出しまで済み、push・マージ待ち（`superpowers:finishing-a-development-branch` の続き。push の前に `pre-push-secret-scan`）。✗ が出たら `superpowers:systematic-debugging`。
+1. plan 5 の PR（Android #92・親 #27）を、利用者の指示でマージする。マージしたら、親の `Android` をマージ後の `main` に進め、Backend・Agent・CICD に文書を写す（`scripts/sync-docs.sh`）。
 2. 次に走るときに、plan 3 と plan 4 の残りの確認をする（0.12.0 以降の版で）。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
@@ -109,7 +109,7 @@
 | [2](docs/plans/2026-10-25-slice5-plan2-agent.md) | Agent: Agent #2〜#5・#7。デプロイと質問の通しの確認まで | ✅ 完了（最終レビューの直しまでデプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。後回しは Agent #9〜#11） |
 | [3](docs/plans/2026-10-26-slice5-plan3-android-asks.md) | Android: 質問と録音（方位の計算・文字での質問・SC-11・#30・#48・#7〜#11・#68）。版 0.11.0 | 実装済み（確認待ち: 走行での方位。2026-10-28 の実機で SC-11・文字の質問（DynamoDB に `inputType = text` で届いた）・機内モード・音量の帯は ✓。後回しは Android #79〜#81） |
 | [4](docs/plans/2026-10-28-slice5-plan4-android-screens.md) | Android: 画面と記録（SC-22・SC-05 のユーザー名・位置の新しさを起動からの経過時間で比べる #17・#24・#50・#61・#59・#69）。版 0.12.0 | 実装済み（確認待ち: 走行での SC-22 と #61。2026-10-28 の実機で SC-22・SC-05 の画面は ✓。マージ済み。後回しは Android #83〜#86） |
-| [5](docs/plans/2026-10-28-slice5-plan5-android-user-and-reread.md) | Android: ユーザー名と読み直し（#72〜#77。名前を先に保存して入れられなければ戻す・止まった理由・数える前の表示・件数）。版 0.13.0 | 実装済み（確認待ち: 実機の確認（plan の Task 10）。JVM 699件・エミュレーター6件。最終レビューで、書き直し待ちの SC-18 の行き止まりを直した（開いたときに書き直す・専用の文言）。後回しは Android #88〜#91） |
+| [5](docs/plans/2026-10-28-slice5-plan5-android-user-and-reread.md) | Android: ユーザー名と読み直し（#72〜#77。名前を先に保存して入れられなければ戻す・止まった理由・数える前の表示・件数）。版 0.13.0 | ✅ 完了（2026-10-28 の実機の確認 ✓。JVM 699件・エミュレーター6件。最終レビューで、書き直し待ちの SC-18 の行き止まりを直した（開いたときに書き直す・専用の文言）。後回しは Android #88〜#91） |
 | 6 | 仕上げ: 05〜08c と README の突き合わせ・PROJECT.md の整理・spec §1 の判定 | 未作成 |
 
 候補の「準備と入力の補い」の SC-01・やめた質問の記録・文ごとの読み上げは、使い方に合わせて要件から消した（adr/0012。2026-10-25、利用者と決めた）。そのうえで、CICD 以外の残りを1つのスライスで終える。plan の順番の理由は spec §13。
