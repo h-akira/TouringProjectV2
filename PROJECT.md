@@ -14,8 +14,7 @@
 
 ## 次にやること
 
-1. plan 7b（Android、0.14.0。spec §15）を `superpowers:writing-plans` で書いて実行する。spec §15.2 の決めたこと（#79・#81・#88・#90）に従う。
-2. 0.14.0 を入れて走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
+1. 0.14.0（実機に入れてある）で走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
 
@@ -62,7 +61,7 @@
 | [5](docs/plans/2026-10-28-slice5-plan5-android-user-and-reread.md) | Android: ユーザー名と読み直し（#72〜#77。名前を先に保存して入れられなければ戻す・止まった理由・数える前の表示・件数）。版 0.13.0 | ✅ 完了（2026-10-28 の実機の確認 ✓。マージ済み。JVM 699件・エミュレーター6件。最終レビューで、書き直し待ちの SC-18 の行き止まりを直した（開いたときに書き直す・専用の文言）。後回しは Android #88〜#91） |
 | [6](docs/plans/2026-10-28-slice5-plan6-finish.md) | 仕上げ: 05〜08c と README の突き合わせ（食い違い8か所・Android #13）・PROJECT.md の整理（持ち越しの作りの決まりを各ユニットの README へ）・走行での spec §1 の判定 | 実装済み（確認待ち: Task 8 の走行での spec §1 の判定。Task 0〜7 は最終レビューの直しまで済み、マージ済み。後回しは Android #93・Backend #33） |
 | [7a](docs/plans/2026-10-28-slice5-plan7a-backend-agent.md) | Backend と Agent: スライス5の途中で立てた指摘（spec §15。Backend #29〜#31・#33、Agent #9・#10。Agent #11 は閉じた）。デプロイと smoke まで | ✅ 完了（デプロイ済み・Agent の smoke 5/5・Backend の smoke 40/40。最終レビューで、出力の上限で切れたツールの呼び出しの前置きを回答にしないよう直した。後回しは無し） |
-| 7b | Android: スライス5の途中で立てた指摘（spec §15。#79〜#81・#83〜#86・#88〜#91・#93）。版 0.14.0。この版で plan 6 の Task 8 の走行 | 未作成 |
+| [7b](docs/plans/2026-10-28-slice5-plan7b-android.md) | Android: スライス5の途中で立てた指摘（spec §15。#79〜#81・#83〜#86・#88〜#91・#93）。版 0.14.0。この版で plan 6 の Task 8 の走行 | ✅ 完了（2026-10-28 の実機の確認 ✓（文字の質問の音量の帯・送っているあいだの取り消し・SC-22）。方位は 0.14.0 での走行で plan 6 の Task 8 と一緒に確かめる。JVM 713件・エミュレーター6件。最終レビューの Minor 4件は直した（取り消した文字の質問が始めた会話を、次の質問が続けない・README の崩れと文言）。後回しは無し。計画を書くときの全体のテストで揺れた別のテストは Android #94 に書いた） |
 
 候補の「準備と入力の補い」の SC-01・やめた質問の記録・文ごとの読み上げは、使い方に合わせて要件から消した（adr/0012。2026-10-25、利用者と決めた）。そのうえで、CICD 以外の残りを1つのスライスで終える。plan の順番の理由は spec §13。
 
