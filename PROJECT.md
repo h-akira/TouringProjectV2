@@ -17,7 +17,7 @@
 1. 0.14.0（実機に入れてある）で走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
-2. スライス6（[spec](docs/specs/2026-10-29-slice6-design.md)）の plan 2a（Android）と 2b（Backend）の計画を `superpowers:writing-plans` で書く（範囲は spec §3）。
+2. スライス6（[spec](docs/specs/2026-10-29-slice6-design.md)）の [plan 2a](docs/plans/2026-10-29-slice6-plan2a-android-moves.md)（Android）と [plan 2b](docs/plans/2026-10-29-slice6-plan2b-backend-moves.md)（Backend。最後にデプロイと smoke）を実行する。互いに独立で、順は問わない。実行方法は利用者が選ぶ（`superpowers:subagent-driven-development` か `superpowers:executing-plans`）。
 
 ## サブプロジェクト
 
@@ -75,8 +75,8 @@
 | plan | 中身 | 状態 |
 |---|---|---|
 | [1](docs/plans/2026-10-29-slice6-plan1-sc19-voice-attach.md) | Android: R3-01（SC-19 を背面に回すとインカムのボタンが効かない）を単独で直す。版 0.14.1 | ✅ 完了（2026-10-29 の実機の確認 ✓（背面で質問が始まる・前面で声の入力に戻る・録音中は画面が消えない）。JVM 716件。最終レビューで、背面に回すと録音を捨てることに合わせて、声の入力が動いているあいだ画面を点けたままにした。後回しは Android #96・#97） |
-| 2a | Android の移すだけの作り替え（R10-05・11・09・07・08）。振る舞いは変えない | 未作成 |
-| 2b | Backend の移すだけの作り替え（R11-12・06・07・13）。振る舞いは変えない。デプロイと smoke まで | 未作成 |
+| [2a](docs/plans/2026-10-29-slice6-plan2a-android-moves.md) | Android の移すだけの作り替え（R10-05・11・09・07・08）。振る舞いは変えない | 計画済み |
+| [2b](docs/plans/2026-10-29-slice6-plan2b-backend-moves.md) | Backend の移すだけの作り替え（R11-12・06・07・13）。振る舞いは変えない。デプロイと smoke まで | 計画済み |
 | 3 | 時間の予算（R11-01。Backend・Agent。ADR を伴う）と関連の不具合 | 未作成 |
 | 4 | Android: 音声の経路の札（R10-01・R10-06）と関連の不具合 | 未作成 |
 | 5 | Android: 記録の持ち主と未送信の条件（R10-03・R10-02・R10-10）と関連の不具合 | 未作成 |
