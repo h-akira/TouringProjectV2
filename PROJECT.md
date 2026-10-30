@@ -17,7 +17,7 @@
 1. 0.14.0（実機に入れてある）で走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
-2. スライス6の plan 5（Android: 記録の持ち主と未送信の条件。R10-03・R10-02・R10-10 と関連の不具合。plan 表）の範囲決め（`superpowers:brainstorming`）。着手前に、Android #101 と plan 5 に関わる後回しの issue を見る。
+2. スライス6の plan 5 のマージ（利用者が明示したとき。親と Android の `slice6-plan5`。Android #99 は `Fixes #99` で閉じる）。そのあと plan 6（Backend と Agent の残りの不具合。`claimedAt` を含む）の範囲決め（`superpowers:brainstorming`）。着手前に Backend・Agent の後回しの issue（Backend #35・#37、Agent #14 など）を見る。
 
 ## サブプロジェクト
 
@@ -79,7 +79,7 @@
 | [2b](docs/plans/2026-10-29-slice6-plan2b-backend-moves.md) | Backend の移すだけの作り替え（R11-12・06・07・13）。振る舞いは変えない。デプロイと smoke まで | ✅ 完了（2026-10-29 にデプロイ済み・Backend の smoke 40/40。pytest 360件。振る舞いは変えていない。最終レビューまで済み。後回しは Backend #35） |
 | [3](docs/plans/2026-10-29-slice6-plan3-time-budget.md) | 時間の予算（R11-01。Backend・Agent。[adr/0014](adr/0014-ask-time-budget-from-acceptance.md)）と関連の不具合（R4-02 の時間切れの部分・R5-02・R12-01 の錠）。Agent #6 を開き直して閉じる。デプロイと smoke まで | ✅ 完了（2026-10-30 デプロイ済み。Agent smoke 7/7・Backend smoke 40/40。Agent pytest 104件・Backend pytest 377件。実機で Runtime は同じセッションの 2 本目を 502 で断ると分かり、錠は二重の守り（adr/0014 の追記）。後回しは Agent #14・Backend #37。マージ済み） |
 | [4](docs/plans/2026-10-30-slice6-plan4-audio-route-lease.md) | Android: 音声の経路の札（R10-01・R10-06）と関連の不具合（R1-01・R1-02・R1-03）。版 0.14.2。実機の確かめまで | ✅ 完了（マージ済み。2026-10-30 の実機（Pixel 8a）で、取り消してすぐ押し直した質問・SC-19 や SC-12 を離れた直後の質問は ✓。インカムの音声認識の経路の準備中の取り消しは、個別には確かめていない。版 0.14.2・JVM 734件。最終レビューまで済み。後回しは Android #101） |
-| 5 | Android: 記録の持ち主と未送信の条件（R10-03・R10-02・R10-10）と関連の不具合 | 未作成 |
+| [5](docs/plans/2026-10-30-slice6-plan5-record-owner.md) | Android: 記録の持ち主と未送信の条件（R10-03・R10-02・R10-10）と関連の不具合（R2-01・R2-02）、Android #99。Room の版 7。版 0.14.3。実機の確かめまで | ✅ 完了（2026-10-30 の実機（Pixel 8a）で ✓: 0.14.2 からの上書きで Room 6→7 が通り、走行27件・質問24件が残り、`owner` に設定の名前が入った。名前の変更・未送信で止まる・SC-11 の連打も利用者が ✓。DynamoDB（`USER#sit4ix` の走行27件が端末と一致し、別の名前の領域は増えていない）も ✓。設定の名前を書き換えた食い違いの再現は個別には行っていない。ブランチ `slice6-plan5`、JVM 772件。最終レビューまで済み。#99 はこのブランチで直した（マージで閉じる）。後回しは Android #103（質問ループが持ち主の門を通らない）・#104（Minor 9件）。`toRecord().sent` は意味が違うので1つにしない） |
 | 6 | Backend と Agent: 残りの不具合・脆弱性 | 未作成 |
 | 7 | Android: 残りの不具合・細部 | 未作成 |
 | 8 | 契約（R11-08〜R11-11）。07a・Backend・Android | 未作成 |
