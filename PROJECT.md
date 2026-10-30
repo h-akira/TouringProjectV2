@@ -17,7 +17,7 @@
 1. 0.14.0（実機に入れてある）で走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
-2. スライス6の [plan 6a](docs/plans/2026-10-30-slice6-plan6a-backend.md)（Backend の残りの不具合・権限。R4-02 後半・R4-01・R4-03〜R4-06・R4-12・R4-14、Backend #37・#35）の実行。実行の方法（`superpowers:subagent-driven-development` か `superpowers:executing-plans`）は利用者が選ぶ。ブランチは親も Backend も `slice6-plan6a`。デプロイと smoke の前に利用者へ確認する（IAM を絞るので `AccessDenied` が出たら template に足す）。そのあと plan 6b（Agent の残り。R5-06〜R5-12 と Agent #14）の plan を書く（R5-01 は直さない。[adr/0016](adr/0016-allow-personal-data-in-traces.md)）。
+2. スライス6の plan 6a のデプロイと smoke（利用者の確認を取ってから。`sam build && sam deploy` のあと `scripts/smoke.py`。IAM を絞ったので、`AccessDenied` が出たら template と `tests/test_template.py` の一覧の両方に足して再デプロイする。デプロイ後は CloudWatch で `AccessDenied` と、`ask_recovered` に伴う `ValidationException` を見る）。smoke が通らない経路（`DELETE /asks/{id}`・`DELETE /rides/{r}/notes/{n}`。Backend #40）は、smoke に足すか端末から消して確かめる。そのあと plan 6a のマージ（親と Backend の `slice6-plan6a`）→ plan 6b（Agent の残り。R5-06〜R5-12 と Agent #14。R5-01 は直さない: [adr/0016](adr/0016-allow-personal-data-in-traces.md)）の plan を書く。
 
 ## サブプロジェクト
 
@@ -80,7 +80,7 @@
 | [3](docs/plans/2026-10-29-slice6-plan3-time-budget.md) | 時間の予算（R11-01。Backend・Agent。[adr/0014](adr/0014-ask-time-budget-from-acceptance.md)）と関連の不具合（R4-02 の時間切れの部分・R5-02・R12-01 の錠）。Agent #6 を開き直して閉じる。デプロイと smoke まで | ✅ 完了（2026-10-30 デプロイ済み。Agent smoke 7/7・Backend smoke 40/40。Agent pytest 104件・Backend pytest 377件。実機で Runtime は同じセッションの 2 本目を 502 で断ると分かり、錠は二重の守り（adr/0014 の追記）。後回しは Agent #14・Backend #37。マージ済み） |
 | [4](docs/plans/2026-10-30-slice6-plan4-audio-route-lease.md) | Android: 音声の経路の札（R10-01・R10-06）と関連の不具合（R1-01・R1-02・R1-03）。版 0.14.2。実機の確かめまで | ✅ 完了（マージ済み。2026-10-30 の実機（Pixel 8a）で、取り消してすぐ押し直した質問・SC-19 や SC-12 を離れた直後の質問は ✓。インカムの音声認識の経路の準備中の取り消しは、個別には確かめていない。版 0.14.2・JVM 734件。最終レビューまで済み。後回しは Android #101） |
 | [5](docs/plans/2026-10-30-slice6-plan5-record-owner.md) | Android: 記録の持ち主と未送信の条件（R10-03・R10-02・R10-10）と関連の不具合（R2-01・R2-02）、Android #99。Room の版 7。版 0.14.3。実機の確かめまで | ✅ 完了（2026-10-30 の実機（Pixel 8a）で ✓: 0.14.2 からの上書きで Room 6→7 が通り、走行27件・質問24件が残り、`owner` に設定の名前が入った。名前の変更・未送信で止まる・SC-11 の連打も利用者が ✓。DynamoDB（`USER#sit4ix` の走行27件が端末と一致し、別の名前の領域は増えていない）も ✓。設定の名前を書き換えた食い違いの再現は個別には行っていない。ブランチ `slice6-plan5`、JVM 772件。最終レビューまで済み。#99 はこのブランチで直した（マージで閉じる）。後回しは Android #103（質問ループが持ち主の門を通らない）・#104（Minor 9件）。`toRecord().sent` は意味が違うので1つにしない） |
-| [6a](docs/plans/2026-10-30-slice6-plan6a-backend.md) | Backend: 残りの不具合・権限（R4-02 の実行環境の落ち＝`claimedAt`・R4-01・R4-05・R4-03・R4-04・R4-06・R4-12・R4-14）、Backend #37・#35。デプロイと smoke まで | 計画済み |
+| [6a](docs/plans/2026-10-30-slice6-plan6a-backend.md) | Backend: 残りの不具合・権限（R4-02 の実行環境の落ち＝`claimedAt`・R4-01・R4-05・R4-03・R4-04・R4-06・R4-12・R4-14）、Backend #37・#35。デプロイと smoke まで | 実装済み（確認待ち: デプロイと smoke。ブランチ `slice6-plan6a`、pytest 392件。最終レビューまで済み。後回しは Backend #40。Backend #37・#35 はこのブランチで直した（マージで閉じる）） |
 | 6b | Agent: 残りの不具合（R5-06〜R5-12）、Agent #14。デプロイと smoke まで。R5-01（トレースの個人情報）は直さない（[adr/0016](adr/0016-allow-personal-data-in-traces.md)） | 未作成 |
 | 7 | Android: 残りの不具合・細部 | 未作成 |
 | 8 | 契約（R11-08〜R11-11）。07a・Backend・Android | 未作成 |
