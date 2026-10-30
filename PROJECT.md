@@ -17,7 +17,7 @@
 1. 0.14.0（実機に入れてある）で走るときに、plan 3 と plan 4 の残りの確認と、spec §1 の判定（[plan 6](docs/plans/2026-10-28-slice5-plan6-finish.md) の Task 8。走る前に Backend の smoke）をする。結果は Task 8 の Step 4 のとおり PROJECT.md に書く。✗ が出たら `superpowers:systematic-debugging`。
    - plan 3: 走りながら1回・1分以上止まってから1回「右手に見える〜」と質問して左右が正しいこと、止まっているあいだの地点メモ。AI が DynamoDB でその質問と地点メモの `headingDegrees` を確かめる（読むだけ）。
    - plan 4（plan の Task 14 のうち動かすもの）: SC-22 で動くと方位が出て向きと合う・止まると30秒を過ぎて「保っています」が添えられる・保つ上限を超えると方位なし（2の後半・3の前半）、走行の開始・一時停止で出どころが切り替わる（4）、SC-19 の声の入力の文字にしているあいだの押下で失敗の合図（6）。
-2. スライス6の plan 6a のマージ（利用者が明示したとき。親と Backend の `slice6-plan6a`。Backend #37・#35 は `Fixes` で閉じる。Android・Agent・CICD の `main` に docs の写しのコミットが未 push で残っている）。そのあと plan 6b（Agent の残り。R5-06〜R5-12 と Agent #14。R5-01 は直さない: [adr/0016](adr/0016-allow-personal-data-in-traces.md)）の plan を書く（`superpowers:writing-plans`。範囲は決めてある）。
+2. スライス6の plan 6b のマージ（利用者が明示したとき。親と Agent の `slice6-plan6b`。push の前に `pre-push-secret-scan`）。そのあと plan 7（Android の残り。Android #103 の質問ループの門・#101・#97・#96・#94 と、報告 A の R3-02・R3-03 など）の範囲決め（`superpowers:brainstorming`）。
 
 ## サブプロジェクト
 
@@ -81,7 +81,7 @@
 | [4](docs/plans/2026-10-30-slice6-plan4-audio-route-lease.md) | Android: 音声の経路の札（R10-01・R10-06）と関連の不具合（R1-01・R1-02・R1-03）。版 0.14.2。実機の確かめまで | ✅ 完了（マージ済み。2026-10-30 の実機（Pixel 8a）で、取り消してすぐ押し直した質問・SC-19 や SC-12 を離れた直後の質問は ✓。インカムの音声認識の経路の準備中の取り消しは、個別には確かめていない。版 0.14.2・JVM 734件。最終レビューまで済み。後回しは Android #101） |
 | [5](docs/plans/2026-10-30-slice6-plan5-record-owner.md) | Android: 記録の持ち主と未送信の条件（R10-03・R10-02・R10-10）と関連の不具合（R2-01・R2-02）、Android #99。Room の版 7。版 0.14.3。実機の確かめまで | ✅ 完了（2026-10-30 の実機（Pixel 8a）で ✓: 0.14.2 からの上書きで Room 6→7 が通り、走行27件・質問24件が残り、`owner` に設定の名前が入った。名前の変更・未送信で止まる・SC-11 の連打も利用者が ✓。DynamoDB（`USER#sit4ix` の走行27件が端末と一致し、別の名前の領域は増えていない）も ✓。設定の名前を書き換えた食い違いの再現は個別には行っていない。ブランチ `slice6-plan5`、JVM 772件。最終レビューまで済み。#99 はこのブランチで直した（マージで閉じる）。後回しは Android #103（質問ループが持ち主の門を通らない）・#104（Minor 9件）。`toRecord().sent` は意味が違うので1つにしない） |
 | [6a](docs/plans/2026-10-30-slice6-plan6a-backend.md) | Backend: 残りの不具合・権限（R4-02 の実行環境の落ち＝`claimedAt`・R4-01・R4-05・R4-03・R4-04・R4-06・R4-12・R4-14）、Backend #37・#35。デプロイと smoke まで | ✅ 完了（2026-10-30 にデプロイ済み。Backend の smoke 42/42（質問と地点メモの DELETE の2本を足した）・各 Lambda のログに AccessDenied も ValidationException も無い。pytest 392件。最終レビューまで済み。マージ待ち。後回しは Backend #40（受け持ちの回復の端のケース・テストの余裕・文言など）。デプロイ後、実際に落ちた worker の回復（`ask_recovered`）はまだ起きておらず、本番では通っていない） |
-| 6b | Agent: 残りの不具合（R5-06〜R5-12）、Agent #14。デプロイと smoke まで。R5-01（トレースの個人情報）は直さない（[adr/0016](adr/0016-allow-personal-data-in-traces.md)） | 未作成 |
+| [6b](docs/plans/2026-10-30-slice6-plan6b-agent.md) | Agent: 残りの不具合・権限（R5-06〜R5-12）、Agent #14。デプロイと smoke まで。R5-01（トレースの個人情報）は直さない（[adr/0016](adr/0016-allow-personal-data-in-traces.md)） | ✅ 完了（2026-10-30 にデプロイ済み。Runtime の役割の SSM は `parameter/trv2/*/agent-model-id` の1つだけになったことを読んで確認。Agent の smoke 7/7（同じセッションの2本の確かめは、Runtime が2本を別のインスタンスで動かすことがあると分かり、緩めた。[adr/0014](adr/0014-ask-time-budget-from-acceptance.md) に追記）・Backend の smoke 42/42。pytest 112件・jest 3件。最終レビューまで済み。マージ待ち。後回しは Agent #17（同じセッションの同時の呼び出しが別のインスタンスで動くと、履歴が片方になる）・#18（Minor 7件）） |
 | 7 | Android: 残りの不具合・細部 | 未作成 |
 | 8 | 契約（R11-08〜R11-11）。07a・Backend・Android | 未作成 |
 | 9 | 文書の整合・issue の整理・仕上げ | 未作成 |
