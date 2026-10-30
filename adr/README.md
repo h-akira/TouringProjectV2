@@ -18,3 +18,4 @@
 | [0011](0011-api-spec-and-basic-design-in-parent-docs.md) | API 仕様の正本を親の docs に移し、基本設計を docs に置く | 採用 |
 | [0012](0012-narrow-the-requirements.md) | 要件を使い方に合わせて絞り、当面作らないものを要件から消す | 採用 |
 | [0013](0013-heading-on-android-held-while-stopped.md) | 進行方位は Android が走行のルートから求め、止まっているあいだは止まる直前の向きを保つ | 採用 |
+| [0014](0014-ask-time-budget-from-acceptance.md) | 質問にかけてよい時間は、受け付けから決めた締め切りで Backend と Agent が打ち切る | 採用 |
